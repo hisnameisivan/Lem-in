@@ -1,0 +1,8 @@
+a.out*
+*dSYM
+libft
+lem-in
+.DS_Store
+.vscode
+test_oper.c
+cmpl.sh

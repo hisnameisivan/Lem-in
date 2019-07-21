@@ -6,7 +6,7 @@
 /*   By: waddam <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/26 16:24:10 by draudrau          #+#    #+#             */
-/*   Updated: 2019/07/20 21:19:25 by waddam           ###   ########.fr       */
+/*   Updated: 2019/07/21 17:08:39 by waddam           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -560,18 +560,66 @@ int		ft_search_name(char **map, t_room **room, char end)
 	return (index);
 }
 
-void	ft_insert_links(t_room *room,)
+/*
+** Количество уже имеющихся в массиве соседних с текущим звеном графа звеньев.
+*/
+
+int		ft_count_nodes(t_room **room)
 {
+	int		len;
+
+	len = 0;
+	while (*room != NULL)
+	{
+		(*room)++;
+		len++;
+	}
+	return (len);
+}
+
+/*
+** Realloc для массива соседних с текущим звеном графа звеньев. Увеличение на 11
+** элементов (10 + NULL) при вызове.
+*/
+
+void	ft_insert_links(t_room **all_rooms, t_room *room, int neighbour)
+{
+	t_room	**temp;
 	int		len_lst; // длинна уже записанного списка ссылок на элементы (для реалока)
+	int		i;
+	int		j;
 
 	len_lst = 0;
+	temp = NULL;
+	i = 0;
+	j = 0;
 	if (room->links == NULL)
 	{
-		room->links = (t_room**)malloc(sizeof(t_room*) * 10);
+		room->links = (t_room**)malloc(sizeof(t_room*) * 11);
+		room->links[10] = NULL;
+		room->links[0] = all_rooms[neighbour];
+		room->links[0]->empty_fl = 1;
 	}
 	else
 	{
-		len_lst
+		while (room->links[i] != NULL && room->links[i]->empty_fl == 1)
+			i++;
+		if (room->links[i] != NULL)
+		{
+			len_lst = ft_count_nodes(room->links);
+			temp = room->links;
+			room->links = (t_room**)malloc(sizeof(t_room*) * (len_lst + 11));
+			room->links[len_lst + 10] = NULL;
+			while (j < len_lst + 10)
+			{
+				ft_bzero(room->links[j], sizeof(t_room));
+				j++;;
+			}
+			ft_memcpy(room->links, temp, len_lst);
+			free(temp);
+		}
+		room->links[i] = all_rooms[neighbour];
+		room->links[i]->empty_fl = 1;
 	}
 }
 
@@ -587,7 +635,8 @@ void	ft_write_links(char *map, t_room **room, char **matrix)
 	matrix[name1_ind][name2_ind] = '1';
 	matrix[name2_ind][name1_ind] = '1';
 	ft_printf("d1 == %d d2 == %d\n", name1_ind, name2_ind);
-	ft_insert_links(room[name1_ind]);
+	ft_insert_links(room, room[name1_ind], name2_ind);
+	ft_insert_links(room, room[name2_ind], name1_ind);
 }
 
 /* Функция создает матрицу смежности */
@@ -604,6 +653,19 @@ char	**ft_make_matrix(char **map, t_room **room, t_lem *lem)
 			ft_write_links(map[i], room, matrix);
 		i++;
 	}
+	i = 0;
+	while (*room)
+	{
+		ft_printf("main_room: %s\n", (*room)->name);
+		while ((*room)->links[i])
+		{
+			ft_printf("name: %s\n", (*room)->links[i]->name);
+			i++;
+		}
+		ft_printf("\n");
+		(*room)++;
+	}
+	exit(0);
 	return (matrix);
 }
 

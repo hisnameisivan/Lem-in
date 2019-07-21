@@ -5,6 +5,7 @@
 typedef struct      s_room
 {
     char            *name;
+    int             empty_fl;
     int             x;
     int             y;
     int             fl;
