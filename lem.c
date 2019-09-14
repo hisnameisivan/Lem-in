@@ -3,19 +3,184 @@
 /*                                                        :::      ::::::::   */
 /*   lem.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: waddam <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: draudrau <draudrau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/26 16:24:10 by draudrau          #+#    #+#             */
-/*   Updated: 2019/07/22 23:42:56 by waddam           ###   ########.fr       */
+/*   Updated: 2019/09/14 21:49:41 by draudrau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lemin.h"
+#include <stdio.h>
 # include "./libft/libft.h"
+
+void ft_nul_fl(t_room **room, t_lem *lem)
+{
+	int i = 0;
+	while (i < lem->count_rooms)
+	{
+		room[i]->fl = 0;
+		room[i]->lvl = 0;
+		i++;
+	}
+}
+
+// Проверяем, что очередь непустая. 1 - есть элементы в очереди, 0 - нет
+int		ft_check_empty(int *tmp, t_lem *lem)
+{
+	int i = 0;
+
+	while (i < lem->count_rooms)
+	{
+		if(tmp[i] != -1)
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+void	ft_add_sosedi(char **matrix, t_room **room, int *tmp/*, int i*/)
+{
+	int i;
+	int j = 0;
+	int k = 0;
+	int lvl;
+
+	//i = tmp[i];
+	while (tmp[k] == -1)
+		k++;
+	i = tmp[k];
+	lvl = room[i]->lvl + 1;
+	while (tmp[k] != -1)
+		k++;
+	//k++;
+	while (matrix[i][j] != '\0')
+	{
+		if (matrix[i][j] == '1' && room[j]->fl == 0)
+		{
+			ft_block_link(matrix, i, j);
+			//ft_del_link(matrix, i, j); // удалили ребро
+			tmp[k] = j; // добавили вершину в очередь
+			room[j]->fl = 1;
+			room[tmp[k]]->lvl = lvl; // добавила lvl в вершину
+			k++;
+		}
+		j++;
+	}
+}
+
+
+void	ft_del_left(int *tmp)
+{
+	int i = 0;
+
+	while (tmp[i] == -1)
+		i++;
+	tmp[i] = -1;
+}
+
+int		*ft_alloc_qu(int len)
+{
+	int *tmp;
+
+	tmp = (int *)malloc(sizeof(int) * len);
+	ft_memset(tmp, -1, len * 4);
+	return (tmp);
+}
+
+void	ft_bfs2(char **matrix, t_lem *lem, t_room **room, int *tmp)
+{
+	// int *tmp;
+	int i = 0; // индекс крайней левой вершины в очереди
+
+	// tmp = (int *)malloc(sizeof(int) * lem->count_rooms + 3);
+	// tmp = ft_memset(tmp, -1, (lem->count_rooms + 3) * 4);
+	tmp[0] = 0;
+	while(ft_check_empty(tmp, lem) != 0)
+	{
+		ft_add_sosedi(matrix, room, tmp);
+		ft_del_left(tmp);
+		i++;
+	}
+}
+
+
+// Удаление тупиков
+void	ft_del(char **matrix, int i)
+{
+	int j = 0;
+
+	while (matrix[i][j] != '\0')
+	{
+		if (matrix[i][j] == '1')
+		{
+			matrix[i][j] = '0';
+			matrix[j][i] = '0';
+			printf("Удалили тупик\n");
+		}
+		j++;
+	}
+
+}
+
+void	ft_check_no_path(char **matrix)
+{
+	int i;
+	int j;
+	int	count_units = 0;
+	int fl;
+
+	while (1)
+	{
+		fl = 0;
+		i = 0;
+		while (matrix[i] != NULL)
+		{
+			j = 0;
+			count_units = 0;
+			while (matrix[i][j] != '\0')
+			{
+				if(matrix[i][j] == '1')
+					count_units++;
+				j++;
+			}
+			if (count_units == 1)
+			{
+				fl = 1;
+				ft_del(matrix, i);
+			}
+			i++;
+
+		}
+		if (fl == 0)
+		{
+			break ;
+		}
+	}
+}
+
+
+/*
+** Количество уже имеющихся в массиве соседних с текущим звеном графа звеньев.
+*/
+
+int		ft_count_nodes(t_room **room)
+{
+	int		len;
+
+	len = 0;
+	while (*room != NULL)
+	{
+		room++;
+		len++;
+	}
+	return (len);
+}
+
 
 void	ft_leave(void)
 {
-	ft_printf("ERROR\n");
+	printf("ERROR\n");
 	exit(0);
 }
 
@@ -34,34 +199,37 @@ void	ft_initialization_path(t_path *path)
 	ft_bzero(path, sizeof(t_path));
 }
 
-
-void	ft_print_matrix(char **matrix, t_lem *lem) /* Печатаем матрицу смежности */
+// Печатаем матрицу смежности
+void	ft_print_matrix(char **matrix, t_lem *lem) 
 {
 	int i;
 
 	i = 0;
 	while (i < lem->count_rooms)
 	{
-		ft_printf("%s\n", matrix[i]);
+		printf("%s\n", matrix[i]);
 		i++;
 	}
-	ft_printf("\n\n");
+	printf("\n\n");
 }
 
-void	ft_print_name_lvl(t_lem *lem, t_room **room) /* Печатаем имя, level, count_rooms*/
+// Печатаем имя, level, count_rooms
+void	ft_print_name_lvl(t_lem *lem, t_room **room) 
 {
 	int i;
 
 	i = 0;
-	ft_printf("\nCOUNT_ROOMS = %d\n", lem->count_rooms);
-	ft_printf("\nCOUNT_ANTS = %d\n", lem->ants);
+	printf("\nCOUNT_ROOMS = %d\n", lem->count_rooms);
+	printf("\nCOUNT_ANTS = %d\n", lem->ants);
 	while (i < lem->count_rooms)
 	{
-		ft_printf("name = %s, lvl = %d\n", room[i]->name, room[i]->lvl);
+		printf("name = %s, lvl = %d\n", room[i]->name, room[i]->lvl);
 		i++;
 	}
 }
-void		ft_print_path_index(t_path *path) /* Печатаем путь по индексу */
+
+// Печатаем путь по индексу
+void		ft_print_path_index(t_path *path)
 {
 	int i;
 	int j;
@@ -72,16 +240,17 @@ void		ft_print_path_index(t_path *path) /* Печатаем путь по инд
 		j = 0;
 		while (path->path[i][j] >= 0)
 		{
-			ft_printf("path %d:  %d \n", i, path->path[i][j]);
+			printf("path %d:  %d \n", i, path->path[i][j]);
 			j++;
 		}
-		ft_printf("\nLEN_PATH = %d \n", j);
-		ft_printf("\n");
+		printf("\nLEN_PATH = %d \n", j - 1);
+		printf("\n");
 		i++;
 	}
 }
 
-void		ft_print_path_name(t_path *path, t_room **room) /* Печатаем путь по имени */
+// Печатаем путь по имени
+void		ft_print_path_name(t_path *path, t_room **room) 
 {
 	int i;
 	int j;
@@ -89,7 +258,7 @@ void		ft_print_path_name(t_path *path, t_room **room) /* Печатаем пут
 	i = 0;
 	if (path->path[0][0] == -1)
 	{
-		ft_printf("Пустой набор путей\n"); /* ПРОВЕРКА УБРАТЬ */
+		printf("Пустой набор путей\n"); /* ПРОВЕРКА УБРАТЬ */
 		return ;
 	}
 	while (path->path[i][0] >= 0)
@@ -97,15 +266,14 @@ void		ft_print_path_name(t_path *path, t_room **room) /* Печатаем пут
 		j = 0;
 		while (path->path[i][j] >= 0)
 		{
-			ft_printf("path %d:  %s \n", i, room[path->path[i][j]]->name);
+			printf("path %d:  %s \n", i, room[path->path[i][j]]->name);
 			j++;
 		}
-		ft_printf("\nLEN_PATH = %d \n", j);
-		ft_printf("\n");
+		printf("\nLEN_PATH = %d \n", j);
+		printf("\n");
 		i++;
 	}
 }
-
 
 int		ft_valid_str(char *map)
 {
@@ -226,7 +394,7 @@ int		ft_valid_ants(char **map, t_lem *lem)
 				j++;
 			else
 			{
-				ft_printf("not valid ants\n"); /* ПРОВЕРКА УБРАТЬ */
+				printf("not valid ants\n"); /* ПРОВЕРКА УБРАТЬ */
 				ft_leave();
 			}
 		}
@@ -257,7 +425,7 @@ int		ft_validation(char **map, t_lem *lem)
 				i++;
 			else
 			{
-				ft_printf("2\n");
+				printf("2\n");
 				ft_leave();
 			}
 		}
@@ -270,7 +438,7 @@ int		ft_validation(char **map, t_lem *lem)
 			i++;
 		else
 		{
-			ft_printf("3\n");
+			printf("3\n");
 			ft_leave();
 		}
 	}
@@ -312,7 +480,8 @@ t_room	**ft_allocate_memory(t_lem *lem)
 	return (room);
 }
 
-void 	ft_write(char *map, t_room **room, int k) /* Записывает Name x y */
+// Записывает Name x y
+void 	ft_write(char *map, t_room **room, int k)
 {
     int co;
 
@@ -355,8 +524,8 @@ int		**ft_allocate_matrix_int(int dim)
 	matrix = (int **)malloc(sizeof(int *) * dim);
 	while (i < dim)
 	{
-		matrix[i] = (int *)malloc(sizeof(int) * dim * dim);
-		ft_memset(matrix[i], -1, dim * dim * 4);
+		matrix[i] = (int *)malloc(sizeof(int) * dim); // 02.09 удалил дополнительное умножение на dim
+		ft_memset(matrix[i], -1, dim * 4);
 		i++;
 	}
 	return (matrix);
@@ -429,15 +598,15 @@ int		ft_del_repeat(int ***tmp, int k) /* возвращает длину пос�
 	return (j); /* если не зашли в while => строка пустая (все удалили), в противном случае человеческая длина (+1) */
 }
 
-int		**ft_count_levels(char **matrix, /*t_room **room,*/ t_lem *lem)
+int		**ft_count_levels(char **matrix, t_lem *lem, int **tmp)
 {
 	int		k;
 	int		l;
-	int		**tmp; /* списки смежности */
+	//int		**tmp; /* списки смежности */
 
 	lem->len = 1; /* {0} - 1 элемент */
 	k = 0;
-	tmp = ft_allocate_matrix_int(lem->count_rooms);
+	//tmp = ft_allocate_matrix_int(lem->count_rooms);
 	tmp[0][0] = 0;
 	while (lem->len)
 	{
@@ -447,29 +616,14 @@ int		**ft_count_levels(char **matrix, /*t_room **room,*/ t_lem *lem)
 			ft_create_str(matrix[tmp[k][l]], lem, &tmp, k);
 			l++;
 			lem->len--;
-			//ft_printf("char matrix %s\n", matrix[tmp[k][l]]);
 		}
 		k++;
 		lem->len = ft_del_repeat(&tmp, k); /* возвращает длину последней строчки */
 		lem->n = 0;
 	}
-	k = 0;
-	l = 0;
-	while (k < lem->count_rooms)
-	{
-		l = 0;
-		while (tmp[k][l] != -1)
-		{
-			ft_printf("%d ", tmp[k][l]);
-			l++;
-		}
-		ft_printf("\n");
-		k++;
-	}
 	lem->n = 0; /* для последующего использования */
 	return (tmp);
 }
-
 
 t_room 	**ft_record(char **map, t_lem *lem) /* записываем name и координаты (без связей) */
 {
@@ -479,7 +633,7 @@ t_room 	**ft_record(char **map, t_lem *lem) /* записываем name и ко
 	t_room		**room;
 
 	i = 0; /* 0 строка - это кол-во муравьев - ИСПРАВИТЬ! - там может быть коммент */
-	k = 0; /* индекс для массива структур room */
+	k = 1; /* индекс для массива структур room */
 	room = ft_allocate_memory(lem);
 	while (map[i])
 	{
@@ -489,14 +643,12 @@ t_room 	**ft_record(char **map, t_lem *lem) /* записываем name и ко
 		if (map[i][0] == '#' && valid_resh == 1)
 		{
 			i++;
-		    ft_write(map[i], room, k); /* записать старт на 0 место */
-			k++;
+		    ft_write(map[i], room, 0); /* записать старт на 0 место */
 		}
 		else if ((map[i][0] == '#' && valid_resh == 2))
 		{
 			i++;
-			ft_write(map[i], room, k); /*записать end на *room[lem->count_rooms - 1] */
-			k++;
+			ft_write(map[i], room, lem->count_rooms - 1); /*записать end на *room[lem->count_rooms - 1] */
 		}
 		else if (ft_valid_str(map[i]) == 4)
 		{
@@ -560,106 +712,7 @@ int		ft_search_name(char **map, t_room **room, char end)
 	return (index);
 }
 
-/*
-** Количество уже имеющихся в массиве соседних с текущим звеном графа звеньев.
-*/
-
-int		ft_count_nodes(t_room **room)
-{
-	int		len;
-
-	len = 0;
-	while (*room != NULL)
-	{
-		room++;
-		len++;
-	}
-	return (len);
-}
-
-/*
-** Realloc для массива соседних с текущим звеном графа звеньев. Увеличение на 11
-** элементов (10 + NULL) при вызове.
-*/
-
-// void	ft_insert_links(t_room **all_rooms, t_room *room, int neighbour)
-// {
-// 	t_room	**temp;
-// 	int		len_lst; // длинна уже записанного списка ссылок на элементы (для реалока)
-// 	int		i;
-// 	int		j;
-
-// 	len_lst = 0;
-// 	temp = NULL;
-// 	i = 0;
-// 	j = 0;
-// 	if (room->links == NULL)
-// 	{
-// 		room->links = (t_room**)malloc(sizeof(t_room*) * 11);
-// 		room->links[10] = NULL;
-// 		room->links[0] = all_rooms[neighbour];
-// 		room->links[0]->empty_fl = 1;
-// 	}
-// 	else
-// 	{
-// 		while (room->links[i] != NULL && room->links[i]->empty_fl == 1)
-// 			i++;
-// 		if (room->links[i] != NULL)
-// 		{
-// 			len_lst = ft_count_nodes(room->links);
-// 			temp = room->links;
-// 			room->links = (t_room**)malloc(sizeof(t_room*) * (len_lst + 11));
-// 			room->links[len_lst + 10] = NULL;
-// 			while (j < len_lst + 10)
-// 			{
-// 				ft_bzero(room->links[j], sizeof(t_room));
-// 				j++;;
-// 			}
-// 			ft_memcpy(room->links, temp, len_lst);
-// 			free(temp);
-// 		}
-// 		room->links[i] = all_rooms[neighbour];
-// 		room->links[i]->empty_fl = 1;
-// 	}
-// }
-
-void	ft_insert_links(t_room **all_rooms, t_room *room, int neighbour)
-{
-	t_room	**temp;
-	int		len_lst; // длинна уже записанного списка ссылок на элементы (для реалока)
-	int		i;
-	int		j;
-
-	len_lst = 0;
-	temp = NULL;
-	i = 0;
-	j = 0;
-	if (room->links == NULL)
-	{
-		room->links = (t_room**)malloc(sizeof(t_room*) * 2);
-		room->links[1] = NULL;
-        room->links[0] = all_rooms[neighbour];
-        room->links[0]->empty_fl = 1;
-	}
-	else
-	{
-		while (room->links[i] != NULL && room->links[i]->empty_fl == 1)
-			i++;
-		if (room->links[i] == NULL)
-		{
-			len_lst = ft_count_nodes(room->links);
-			temp = room->links;
-			room->links = (t_room**)malloc(sizeof(t_room*) * len_lst + 2);
-			ft_memcpy(room->links, temp, sizeof(t_room*) * len_lst);
-			room->links[len_lst + 1] = NULL;
-			free(temp);
-		}
-		room->links[i] = all_rooms[neighbour];
-		room->links[i]->empty_fl = 1;
-	}
-}
-
-/* Записываем линки между комнатами на соответствующие позиции матрицы смежности*/
+// Записываем линки между комнатами на соответствующие позиции матрицы смежности
 void	ft_write_links(char *map, t_room **room, char **matrix)
 {
 	int		name1_ind;
@@ -670,42 +723,9 @@ void	ft_write_links(char *map, t_room **room, char **matrix)
 	name2_ind = ft_search_name(&map, room, '\0');
 	matrix[name1_ind][name2_ind] = '1';
 	matrix[name2_ind][name1_ind] = '1';
-	ft_printf("d1 == %d d2 == %d\n", name1_ind, name2_ind);
-	ft_insert_links(room, room[name1_ind], name2_ind);
-	ft_insert_links(room, room[name2_ind], name1_ind);
 }
 
-/* Функция создает матрицу смежности */
-char	**ft_make_matrix(char **map, t_room **room, t_lem *lem)
-{
-	int		i;
-	char	**matrix;
-
-	i = 0;
-	matrix = ft_allocate_matrix_char(lem->count_rooms);
-	while (map[i])
-	{
-		if (ft_valid_str(map[i]) == 5)
-			ft_write_links(map[i], room, matrix);
-		i++;
-	}
-	i = 0;
-	while (*room)
-	{
-		ft_printf("main_room: %s\n", (*room)->name);
-		while ((*room)->links[i])
-		{
-			ft_printf("name: %s\n", (*room)->links[i]->name);
-			i++;
-		}
-		ft_printf("\n");
-		(*room)++;
-	}
-	exit(0);
-	return (matrix);
-}
-
-/* Функция записывает в каждую комнату level, который получили в результате bfc обхода */
+// Функция записывает в каждую комнату level, который получили в результате bfc обхода 
 
 void	ft_write_lvl_in_room(t_room **room, int **tmp)
 {
@@ -727,6 +747,28 @@ void	ft_write_lvl_in_room(t_room **room, int **tmp)
 	}
 }
 
+/* Функция создает матрицу смежности */
+char	**ft_make_matrix(char **map, t_room **room, t_lem *lem)
+{
+	int		i;
+	char	**matrix;
+
+	i = 0;
+	matrix = ft_allocate_matrix_char(lem->count_rooms);
+	while (map[i])
+	{
+		if (ft_valid_str(map[i]) == 5)
+			ft_write_links(map[i], room, matrix);
+		i++;
+	}
+	return (matrix);
+}
+
+void	ft_bfc(char **matrix, t_lem *lem, t_room **room, int **tmp)
+{
+	tmp = ft_count_levels(matrix, lem, tmp);
+	ft_write_lvl_in_room(room, tmp);
+}
 
 /* Функция считает кол-во итераций для каждого набора из путей и записывает в res.
 Исходя их наименьшего 'res' затем выберем лучший набор путей.
@@ -751,6 +793,7 @@ void	ft_count_iter(t_path *path, t_lem *lem) /* кол-во строк = кол-
 	while (path->path[i][0] >= 0)
 	{
 		j = 0;
+		//count_steps--;
 		while (path->path[i][j] >= 0)
 		{
 			count_steps++;
@@ -762,14 +805,31 @@ void	ft_count_iter(t_path *path, t_lem *lem) /* кол-во строк = кол-
 	count_steps = count_steps - count_paths;
 	path->res = ((count_steps + (lem->ants - count_paths)) / count_paths);
 	path->count_paths = count_paths;
-	ft_printf("COUNT_ITER = %d\n\n", path->res);
+	//printf("COUNT_ITER = %d\n\n", path->res);
 }
 
-/* Функция ищет следующую связь, если у вершины есть связи -> хотя бы одна '1' в строке (end не учитываем)
-Возвращаем индекс столбца с '1', либо '-1' - если у вершины нет связей
-Из всех найденных связей выбираем с наименьшим level (чем меньше левел, тем короче путь) */
+void	ft_del_link(char **matrix, int i, int j)
+{
+	matrix[i][j] = '9';
+	matrix[j][i] = '9';
+}
 
-int		ft_next_link(char *matrix, t_lem *lem, t_room **room)
+int ft_units_present(char *str) // наличие связей у вершины
+{
+    int i;
+
+    i = 0;
+    while (str[i] != '\0')
+    {
+        if (str[i] == '1')
+            return(1);
+        else
+            i++;
+    }
+    return (0);
+}
+
+int		ft_next_link_2(char *matrix, t_lem *lem, t_room **room)
 {
 	int j;
 	int tmp;
@@ -778,9 +838,10 @@ int		ft_next_link(char *matrix, t_lem *lem, t_room **room)
 
 	j = 0;
 	fl = 0;
+	lem->count_rooms = lem->count_rooms;
 	while (matrix[j] != '\0')
 	{
-		if (matrix[j] == '1' && j != lem->count_rooms - 1 && j != lem->i /*room[j]->fl == 0*/)
+		if (matrix[j] == '1' /*&& j != lem->count_rooms - 1*/)
 		{
 			if (fl == 0) /* записываем первую встретившуюся вершину, не смотря на левел */
 			{
@@ -796,66 +857,83 @@ int		ft_next_link(char *matrix, t_lem *lem, t_room **room)
 		}
 		j++;
 	}
-	return (fl == 1 ? tmp : -1);
+	return (tmp);
 }
 
-void	ft_del_link(char **matrix, int i, int j)
+void		ft_block_link(char **matrix, int i, int j) /* временно заблокированную связь помечаем '7' */
 {
-	matrix[i][j] = '0';
-	matrix[j][i] = '0';
+	matrix[i][j] = '7';
+	matrix[j][i] = '7';
 }
 
-/* Функция собирает пути - если уперлись в тупик рекурсивно откатываемся на предыдущий шаг, при этом
-затираем "тупиковую" связь и ищем обходной путь, если откатились до end - значит, путей больше нет.
-2 варианта выхода из фунции - либо через lem->j = 0 - означает, что собрали путь (дошли до от end до start),
-либо тупик - в строке закончились '1' (каждый раз "затираем" ребро в матрице смежности (1->0),
-чтобы не использовать повторно ) */
-
-int		ft_check_path(t_room **room, char **matrix, t_lem *lem, t_path *path, int j)
+// 02.09 удаление из набора очень длинного пути
+void ft_path_overwrite(int i, t_path *path)
 {
-	//ft_printf("recursia\n");
-	if (j == 0) /* базовое условие выхода из рекурсии - пришли в нулевую строку (это start) */
-		return (1);
-	if (ft_next_link(matrix[j], lem, room) != -1) /* если в строке есть '1'-> есть куда идти (раньше был while) */
+	int j;
+	j = 0;
+	while (path->path[i][j] > -1)
 	{
-		path->j++;
-		lem->i = j; /* lem->i - это из какой строки пришли */
-		j = ft_next_link(matrix[j], lem, room);
-		if (ft_check_path(room, matrix, lem, path, j) == 1)
+		path->path[i][j] = -1;
+		j++;
+	}
+}
+
+int ft_check_path_2(t_room **room, char **matrix, t_lem *lem, t_path *path)
+{
+    int str;
+
+    path->j = 0;
+    str = lem->count_rooms - 1;
+    path->path[path->i][path->j] = str;
+    path->j++;
+	if (ft_units_present(matrix[0]) == 0 || ft_units_present(matrix[lem->count_rooms - 1]) == 0)
+	{
+		path->path[path->i][0] = -1;
+		return (0); // мб в функцию, которая вызывает ft_check_path_2 добавить флаг, чтобы не было бесконечного цикла
+	}
+    while (str != 0) /* выполняем пока не пришли в строку start */
+    {
+		//ft_print_path(path->path[path->i]);
+		if (path->j > 100) // 02.09 заглушка на длиннющий путь
 		{
-			/*path->path[lem->k][lem->l] = j; */
-			path->path[path->i][path->j] = j;
-			ft_del_link(matrix, lem->i, j);
-			path->j--;
+			ft_path_overwrite(path->i, path);
+			path->i--;
 			return (1);
+		}
+		// if (path->i > 10) // 02.09 заглушка на количество путей
+		// {
+		// 	// ft_path_overwrite(path->i, path);
+		// 	// path->i--;
+		// 	return (0);
+		// }
+		if (ft_units_present(matrix[str]) == 1)
+		{
+			str = ft_next_link_2(matrix[str], lem, room);
+			path->path[path->i][path->j] = str;
+			ft_del_link(matrix, path->path[path->i][path->j], path->path[path->i][path->j - 1]);
+			path->j++;
+			continue ;
 		}
 		else
 		{
-			ft_del_link(matrix, lem->i, j);
-			j = lem->i;
+			if (str == lem->count_rooms - 1)
+			{
+				path->path[path->i][0] = -1;
+				return (0);
+			}
+			else
+			{
+				path->j--;
+				str = path->path[path->i][path->j];
+				path->path[path->i][path->j + 1] = -1;
+				if (ft_units_present(matrix[str]) == 1)
+				{
+					path->j++;
+				}
+			}
 		}
-	}
-	return (0);
-}
-
-/* Функция копирует матрицу смежности */
-
-char	**ft_copy_matrix(char **matrix, int len)
-{
-	int		i;
-	int		j;
-	char	**copy;
-
-	i = 0;
-	j = 0;
-	copy = ft_allocate_matrix_char(len);
-	while (matrix[i])
-	{
-		ft_strcpy(copy[i], matrix[i]);
-		i++;
-	}
-	copy[i] = NULL;
-	return (copy);
+    }
+    return (1);
 }
 
 void	ft_free_path(t_path ***path, int i)
@@ -875,7 +953,7 @@ t_path		**ft_allocate_memory_path(int len, int count_rooms)
 	t_path	**path;
 
 	i = 0;
-	if (!(path = (t_path**)malloc(sizeof(t_path*) * len)))
+	if (!(path = (t_path**)malloc(sizeof(t_path*) * (len + 1)))) // было без +1
 		ft_leave();
 	while (i < len)
 	{
@@ -892,18 +970,27 @@ t_path		**ft_allocate_memory_path(int len, int count_rooms)
 	return (path);
 }
 
-void		ft_free_str(char **matrix, int *path, int len) /* Зануляем строку */
+// Заменяем в матрице '1' на '9'
+void		ft_free_str(char **matrix, int *path)
 {
 	int	i;
+	int j;
 	int tmp;
 
 	i = 1; /* берем из пути индексы (начиная с 1го чтобы не занулять строку end и зануляем соответствующие строки матрицы смежности*/
 	while (path[i] != 0)
 	{
 		tmp = path[i];
-		ft_memset(matrix[tmp], '0', len);
+		j = 0;
+		while (matrix[tmp][j] != '\0')
+		{
+			if (matrix[tmp][j] == '1')
+			{
+				matrix[tmp][j] = '9';
+			}
+			j++;
+		}
 		i++;
-
 	}
 }
 
@@ -922,39 +1009,7 @@ void	ft_free_matrix(char ***matrix)
 	*matrix = NULL;
 }
 
-/* Функция записывает первый набор путей */
-
-int		*ft_first_path(t_path *path, t_room **room, t_lem *lem, char **matrix_copy)
-{
-	path->i = -1;
-	while (1)
-	{
-		path->i++;
-		path->j = 0;
-		if (ft_check_path(room, matrix_copy, lem, path, lem->count_rooms - 1) == 0)
-		{
-			/* Зафришить неоконченный путь */
-			break ;
-		}
-		else
-		{
-			path->path[path->i][path->j] = lem->count_rooms - 1; 		/* записываем индекс комнаты end на первое место */
-			ft_del_link(matrix_copy, lem->count_rooms - 1, path->path[path->i][1]);
-			ft_free_str(matrix_copy, path->path[path->i], lem->count_rooms); /* зануляем всю строку*/
-			//ft_print_path_index(path[0]);						 		/* печатаем путь по индексу */
-		}
-	}
-	return (path->path[0]);
-	ft_free_matrix(&matrix_copy);
-}
-
-void		ft_block_link(char **matrix, int i, int j) /* временно заблокированную связь помечаем '7' */
-{
-	matrix[i][j] = '7';
-	matrix[j][i] = '7';
-}
-
-void		ft_unblock_link(char **matrix)
+void		ft_unblock_all(char **matrix)
 {
 	int i;
 	int j;
@@ -965,107 +1020,174 @@ void		ft_unblock_link(char **matrix)
 		j = 0;
 		while (matrix[i][j] != '\0')
 		{
-			if (matrix[i][j] == '7')
+			if (matrix[i][j] == '7' || matrix[i][j] == '9')
 				matrix[i][j] = '1';
 			j++;
 		}
 		i++;
 	}
 }
-int		ft_path_with_del_link(t_path *path, t_room **room, t_lem *lem, char **matrix_copy)
+
+void	ft_print_path(int *path)
 {
-	path->i = 0;
-	path->j = 0;
-	if (ft_check_path(room, matrix_copy, lem, path, lem->count_rooms - 1) == 0)
-		return (0);
-	else
+	int i = 0;
+	
+	while (path[i] > -1)
 	{
-		path->path[0][0] = lem->count_rooms - 1; 		/* записываем индекс комнаты end на первое место */
-		ft_del_link(matrix_copy, lem->count_rooms - 1, path->path[0][1]);
-		ft_free_str(matrix_copy, path->path[0], lem->count_rooms);
+		printf("%d ", path[i]);
+		i++;
 	}
-	return (1);
+	printf("\n");
 }
 
-void		ft_all(t_path *path, t_room **room, t_lem *lem, char **matrix_copy)
+// Функция записывает первый набор путей 
+int		*ft_first_path(t_path *path, t_room **room, t_lem *lem, char **matrix, int *tmp)
 {
-	path->i = 0;
+	path->i = -1;
 	while (1)
 	{
-		path->i++; /* начинаем запись остальных путей с 1ой строки (в нулевой уже лежит кратчайший путь) */
+		path->i++;
 		path->j = 0;
-		if (ft_check_path(room, matrix_copy, lem, path, lem->count_rooms - 1) == 0)
-		{
-			/* Зафришить неоконченный путь */
+		if (ft_check_path_2(room, matrix, lem, path) == 0)
 			break ;
-		}
 		else
-		{
-			path->path[path->i][path->j] = lem->count_rooms - 1; 		/* записываем индекс комнаты end на первое место */
-			ft_del_link(matrix_copy, lem->count_rooms - 1, path->path[path->i][1]);
-			ft_free_str(matrix_copy, path->path[path->i], lem->count_rooms); /* зануляем всю строку*/
-		}
+			ft_free_str(matrix, path->path[path->i]); /* блокируем пути '9' */
+		//printf("Путь %d\n", path->i);
+		//ft_print_path(path->path[path->i]);
+		//printf("\n\n");
+		ft_nul_fl(room, lem);
+		ft_bfs2(matrix, lem, room, tmp);
+		ft_unblock_link(matrix, '7');
 	}
-	ft_free_matrix(&matrix_copy);
+	ft_count_iter(path, lem);
+	ft_unblock_all(matrix);
+	return (path->path[0]);
 }
 
-void		ft_del_info_path(t_path *path/*, t_lem *lem*/)
+// Заменяем либо '7', либо '9' на '1'
+void		ft_unblock_link(char **matrix, char num)
+{
+	int i;
+	int j;
+
+	i = 0;
+	while (matrix[i] != NULL)
+	{
+		j = 0;
+		while (matrix[i][j] != '\0')
+		{
+			if (matrix[i][j] == num)
+				matrix[i][j] = '1';
+			j++;
+		}
+		i++;
+	}
+}
+
+// Зануление структуры t_path
+void		ft_del_info_path(t_path *path, t_lem *lem)
 {
 	int i;
 
 	i = 0;
-	ft_bzero(path, sizeof(t_path));
-	// while (i < lem->count_rooms)
-	// {
-	// 	ft_memset(path->path[i], -1, lem->count_rooms * 4);
-	// 	i++;
-	// }
-
-}
-
-void		ft_all_paths(t_path **path, t_room **room, t_lem *lem, char **matrix, int *first)
-{
-	int		i;
-	int		k;
-	int		len;
-	int		count = 0;
-	char	**matrix_copy;
-
-	i = 1;
-	k = 1;
-	len = 0;
-
-	while (first[len] >= 0)
-		len++;
-	len = len - 3; /* кол-во ребер, которое будем удалять = (кол-во вершин - 1) и еще (- 2) (т.к. не удаляем ребра у start и end) */
-	matrix_copy = ft_copy_matrix(matrix, lem->count_rooms);
-	while (len)
+	path->i = 0;
+	path->j = 0;
+	path->count_paths = 0;
+	path->res = 0;
+	while (i < lem->count_rooms)
 	{
-		count++; /* считаем сколько раз заходили в while */
-		ft_block_link(matrix_copy, first[i], first[i + 1]);
-		if (ft_path_with_del_link(path[k], room, lem, matrix_copy) == 0) /* собираем "новый" кратчайший путь c учетом, что заблокировали 1 ребро*/
-		{																/* возможно надо еще пройтись bfs */
-			ft_printf("no path\n");
-			return ;
-		}
-		ft_unblock_link(matrix_copy); /* разблокируем ребро, чтобы найти отальные пути */
-		ft_all(path[k], room, lem, matrix_copy);
-		ft_count_iter(path[k], lem); /* считаем res */
-		k++; /* переходим на следующую структуру (всего их 3, новые не создаем, перезаписываем следующий набор в структуру с большим res) */
-		i++; /* чтобы заблокировать следующее ребро из кратчайшего пути path[0] */
-		len--;
-		if (count == 2) /* выбираем куда перезаписывать новый набор путей (выбираем k) */
-		{
-			count = 1;
-			k = (path[1]->res > path[2]->res ? 1 : 2);
-			ft_del_info_path(path[k]/*, lem*/); /* только зануляем информацию (не фришим) чтобы перезаписывать поверх */
-		}
-
+		ft_memset(path->path[i], -1, lem->count_rooms * 4);
+		i++;
 	}
 
 }
 
-/* Функция записывает путь в правильном порядке (от start к end), т.к. изначально путь хранится наоборот */
+int			choose_set_of_paths(t_path **path)
+{
+	int tmp;
+
+	tmp = ((path[0]->res) > (path[1]->res) && (path[1]->res != 0) ? 1 : 0);
+	tmp = (tmp > (path[2]->res) && (path[2]->res != 0) ? 2 : tmp);
+	return (tmp);
+}
+
+// Устанавливаем на все позиции матрицы "-1"
+void		ft_clear_matrix_int(int **matrix, int len)
+{
+	int i = 0;
+
+	while (i < len)
+	{
+		ft_memset(matrix[i], -1, len * 4);
+		i++;
+	}
+}
+
+int		ft_all_paths(t_path **path, t_room **room, t_lem *lem, char **matrix, int *first, int *temp)
+{
+	int		i;
+	int		k;
+	int		len;
+	int		flag;
+
+	i = 1;
+	k = 1;
+	len = 0;
+	flag = 0;
+
+	while (first[len] >= 0)
+		len++;
+	len = len - 3; /* кол-во ребер, которое будем удалять = (кол-во вершин - 1) и еще (- 2) (т.к. не удаляем ребра у start и end) */
+	while (len)
+	{
+		path[k]->i = 0;
+		
+		//ft_block_link(matrix, first[i], first[i + 1]);
+		ft_del_link(matrix, first[i], first[i + 1]);
+		ft_nul_fl(room, lem);
+		ft_bfs2(matrix, lem, room, temp);
+		ft_unblock_link(matrix, '7');
+		if (ft_check_path_2(room, matrix, lem, path[k]) == 0)
+		{
+			ft_unblock_link(matrix, '7');
+			i++;
+			len--;
+			continue ;
+		}
+
+		while (1)
+		{
+			ft_nul_fl(room, lem);
+			ft_bfs2(matrix, lem, room, temp);
+			ft_unblock_link(matrix, '7');
+			path[k]->i++;
+			path[k]->j = 0;
+			if (ft_check_path_2(room, matrix, lem, path[k]) == 0)
+				break ;
+			else
+				ft_free_str(matrix, path[k]->path[path[k]->i]); /* заменяем "1" на "9" */
+		}
+		ft_count_iter(path[k], lem);
+		if (flag == 1 && (len - 1))
+		{
+			k = (path[1]->res > path[2]->res ? 1 : 2);
+			ft_del_info_path(path[k], lem); /* только зануляем информацию (не фришим) чтобы перезаписывать поверх */
+		}
+		if (flag == 0)
+		{
+			flag = 1;
+			k++;
+		}
+		len--;
+		i++;
+		ft_unblock_all(matrix);
+	}
+	k = choose_set_of_paths(path);
+	return(k);
+}
+
+// Функция записывает путь в правильном порядке (от start к end), т.к. изначально путь хранится наоборот 
+// На нулевом месте хранится длина пути
 void		ft_reverse_path(t_path *path)
 {
 	int i;
@@ -1080,7 +1202,8 @@ void		ft_reverse_path(t_path *path)
 	{
 		while (path->path[k][j] >= 0)
 				j++;
-		j--;
+		path->path[k][j] = j;
+		//j--;
 		while (i < j)
 		{
 			tmp = path->path[k][i];
@@ -1090,102 +1213,204 @@ void		ft_reverse_path(t_path *path)
 			j--;
 		}
 		k++;
-		j = 0;
 		i = 0;
+		j = 0;
 	}
 }
 
 
-// void		ft_print_result(t_room **room, t_path *path, t_lem *lem)
-// {
-// 	int i = 0;
-// 	int delta = 0;
-// 	int step = 0;
-// 	int index_room;
-// 	lem->i = 1; /* муравьи */
-// 	//lem->j = 0;
-// 	path->i = 0;
-// 	path->j = 1; /* name комнаты start не выводим */
-// 	int res = path->res;
-
-// 	step = path->count_paths + delta;
-// 	while (1)
-// 	{
-// 		while (step - i > 0)
-// 		{
-// 			index_room = path->path[path->i][path->j];
-// 			ft_printf("L%d-%s ", lem->i, room[index_room]->name);
-// 			path->i++;
-// 			lem->i++; /* следующий муравей */
-// 			if (lem->i > lem->ants)
-// 				break ;
-// 			i++;
-// 		}
-// 		path->i = 0;
-// 		path->j++; /* индекс по iму пути */
-// 		lem->i = 1;
-// 		ft_printf("\n");
-// 		res--;
-// 		((path->res) < (res / 2)) ? (step = step + delta) : (step = step - delta);
-// 		if (!res)
-// 			break ;
-// 	}
-
-// }
-
-int			choose_set_of_paths(t_path **path)
+// В каждый путь кладем количество муравьев, которые пойдут по этому пути
+// path->path[i][0] хранится len массива
+// path->path[i][1] хранится кол-во муравьев
+void		ft_put_ants_in_path(t_lem *lem, t_path *path)
 {
-	int tmp;
+	int		i;
+	int 	sum;
+	int		ants;
 
-	tmp = ((path[0]->res) < (path[1]->res) ? path[0]->res : path[1]->res);
-	tmp = (tmp < (path[2]->res) ? tmp : path[2]->res);
-	return (tmp);
+	sum = 0;
+	ants = lem->ants;
+	while (ants > 0)
+	{
+		i = 0;
+		while (path->path[i][0] != -1)
+		{
+			if (sum > path->path[i][0] + path->path[i][1])
+			{
+				path->path[i][1]++;
+				ants--;
+				if (ants == 0)
+					break ;
+			}
+			i++;
+		}
+		sum++;
+	}
 }
+
+void		add_path_in_matrix(t_path *path, int index, int **matrix_res)
+{
+	int i;
+	int j;
+
+	i = path->i; // смещение вниз по столбцу матрицы
+	j = 2; // смещение влево по пути, начинаем с 2х т к на 0м месте len, на 1м количество муравьев
+	while (path->path[index][j] > 0)
+	{
+		matrix_res[i][path->j] = path->path[index][j];
+		i++;
+		j++; 
+	}
+}
+
+
+// Создает несимметричную int матрицу и заполняет ее "-1"
+// x длина, y высота
+
+int		**ft_allocate_matrix_int_new(int x, int y)
+{
+	int		i;
+	int		**matrix;
+
+	i = 0;
+	matrix = (int **)malloc(sizeof(int *) * y);
+	while (i < y)
+	{
+		matrix[i] = (int *)malloc(sizeof(int) * x);
+		ft_memset(matrix[i], -1, x * 4);
+		i++;
+	}
+	return (matrix);
+}
+
+int		**ft_create_res_matrix(t_lem *lem, t_path *path, int iter)
+{
+	int	i;
+	int	**matrix_res;
+	int ants;
+
+	i = 0;
+	path->i = 0;
+	path->j = 0;
+	ants = lem->ants;
+	matrix_res = ft_allocate_matrix_int_new(ants + 1, iter + 3); // несимметричная матрица
+	while (ants)
+	{
+		while (path->path[i][0] != -1)
+		{
+			if (path->path[i][1] > 0)
+			{
+				add_path_in_matrix(path, i, matrix_res);
+				path->j++;
+				path->path[i][1]--; // отняли муравья из пути в массиве
+				ants--; // отняли муравья от общего количества муравьев
+			}
+			i++;
+		}
+		path->i++;
+		i = 0;
+	}
+	return (matrix_res);
+}
+
+int	path_present(int *str, int ants)
+{
+	int j = 0;
+
+	while(j < ants)
+	{
+		if(str[j] > 0)
+			return (1);
+		j++;
+	}
+	return (0);
+}
+
+void		ft_print_res(int **matrix_res, t_lem *lem, t_room **room)
+{
+	int i = 0;
+	int j = 0;
+	int ants = lem->ants;
+	
+	while(path_present(matrix_res[i], ants) == 1)
+	{
+		while(j < ants)
+		{				
+			if (matrix_res[i][j] > 0)
+			{
+				printf("L%d-", j + 1);
+				printf("%s ", room[matrix_res[i][j]]->name);
+			}
+			j++;
+		}
+		i++;
+		j = 0;
+		printf("\n");
+	}
+	printf("count_iter=%d\n", i);
+}
+
 
 int			main(void)
 {
+	int		k = 0;
 	t_lem	lem;
-	int		**tmp; 			/* списки смежности */
-	char	**map; 			/* карта */
-	char	**matrix; 		/* матрица смежности */
-	char	**matrix_copy;
-	t_room	**room; 		/* массив структур для комнат */
-	t_path	**path; 		/* массив структур набора путей */
-	int		*first;			/* кратчайший путь из 1-го набора путей (из него будем удалть ребра) */
+	char	**map; 			// карта
+	char	**matrix; 		// матрица смежности
+	int		*tmp;
+	t_room	**room; 		// массив структур для комнат
+	t_path	**path; 		// массив структур набора путей
+	int		*first;			// кратчайший путь из 1-го набора путей (из него будем удалть ребра)
+	int		**matrix_res;	// конечная матрица для вывода
 
 	ft_initialization_lem(&lem);
 	map = ft_read_map();
 	ft_validation(map, &lem) == 1 ? room = ft_record(map, &lem) : exit (0);
 	matrix = ft_make_matrix(map, room, &lem);
-	matrix_copy = ft_copy_matrix(matrix, lem.count_rooms); /* работаем с копией матрицы, т.к. в процессе сбора пути удаляем связи */
-	tmp = ft_count_levels(matrix, &lem);
-	ft_write_lvl_in_room(room, tmp);
-	//ft_flag_null(room, lem.count_rooms); 					/* зануляем флаги у комнат */
-	path = ft_allocate_memory_path(3, lem.count_rooms + 1); /* выделяем память под 3 структуры, чтобы не перезаписывать */
-	first = ft_first_path(path[0], room, &lem, matrix_copy); /* записываем первый набор путей (без удаления ребер) */
-	ft_all_paths(path, room, &lem, matrix, first);
+	//ft_check_no_path(matrix);
+	tmp = ft_alloc_qu(lem.count_rooms + 3);
+	ft_bfs2(matrix, &lem, room, tmp);
+	ft_unblock_all(matrix);
+	
+	path = ft_allocate_memory_path(3, lem.count_rooms + 1); // выделяем память под 3 структуры, чтобы перезаписывать 
+	first = ft_first_path(path[0], room, &lem, matrix, tmp); // записываем первый набор путей (без удаления ребер) 
+	k = ft_all_paths(path, room, &lem, matrix, first, tmp); // возвращает индекс набора путей
+
+	ft_reverse_path(path[k]); // разворачивает путь и записывает длину пути на 0 место
+	ft_put_ants_in_path(&lem, path[k]); // на 1 место каждого пути кладем кол-во муравьев
+	//ft_print_path_index(path[k]); // Проверка
+	//printf("\n0 набор путей\n");
+	//ft_print_path_index(path[0]);
+	matrix_res = ft_create_res_matrix(&lem, path[k], path[k]->res); // Создаем матрицу из путей для всех меравьев, которую будем выводить построчно
+	ft_print_res(matrix_res, &lem, room); // Печатаем вывод
 
 
-	// Печать
-	int k = 0;
-	while (k < 3)
-	{
-		ft_printf("SET OF PATHS #%d\n", k);
-		ft_reverse_path(path[k]);
-		ft_print_path_name(path[k], room);
-		ft_count_iter(path[k], &lem);
-		k++;
-	}
+	printf("PATH->RES = %d\n", path[k]->res);
+	printf("OK\n");
+	//ft_print_name_lvl(&lem, room);
+	//ft_print_matrix(matrix, &lem);
+    return (0);
+}
+
+
 	// ft_print_path_name(path[0], room); 	/* печатаем пути по name */
 	// ft_count_iter(path[0], &lem); 		/* кол-во итераций (= кол-во строк в конечном выводе) */
 	// ft_print_path_name(path[1], room);
 	// ft_count_iter(path[1], &lem); 		/* кол-во итераций (= кол-во строк в конечном выводе) */
-	k = choose_set_of_paths(path);
 	//ft_print_name_lvl(&lem, room);
 	//ft_print_matrix(matrix, &lem); 	/* печатаем матрицу смежности */
-
-	ft_reverse_path(path[1]); /* записываем путь в правильном порядке */
 	//ft_print_result(room, path[1], &lem); /* конечный вывод */
-	ft_printf("OK\n");
-    return (0);
-}
+
+		// зафришить остальные наборы путей
+	
+	// Печать всех наборов путей
+	// k = 0;
+	// while (k < 3)
+	// {
+	// 	printf("SET OF PATHS #%d\n", k);
+	// 	ft_reverse_path(path[k]);
+	// 	//ft_print_path_name(path[k], room);
+	// 	ft_count_iter(path[k], &lem);
+	// 	printf("COUNT_ITER = %d\n\n", path[k]->res);
+	// 	k++;
+	// }
