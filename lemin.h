@@ -30,8 +30,8 @@ typedef struct      s_lem
 typedef struct      s_valid
 {
     int             name;
-    int             space;
-    int             defice;
+    int             sp;
+    int             hyp;
     int             count_x;
     int             count_y;
 }                   t_valid;
@@ -57,8 +57,9 @@ int		ft_valid_str(char *map);
 
 void	ft_helper_1(char map_i, t_valid *val, int *i, int *fl);
 void	ft_helper_2(t_valid *val, int *i, int *fl);
-int		ft_helper_3(char map_i, t_valid *val, int *i);
-int		ft_helper_4(char map_i, t_valid *val, int *i);
+int		ft_helper_3(char *map, t_valid *val, int *i);
+int		ft_helper_4(char *map, t_valid *val, int *i);
+int		ft_helper_5(char *map, t_valid *val, int *i, int *fl);
 
 void	ft_free_str(int **sets, int *path);
 void	ft_free_map(char ***map);
