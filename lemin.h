@@ -50,6 +50,9 @@ typedef struct      s_path
 }                   t_path;
 
 void		ft_free_str(int **sets, int *path);
+
+void	ft_free_map(char ***map);
+
 void    ft_nul_fl(t_room **room, t_lem *lem);
 int		ft_check_empty(int *tmp, t_lem *lem);
 void	ft_add_neighbors(int **sets, t_room **room, int *tmp);
@@ -84,7 +87,7 @@ int		ft_next_link_2(int *str, t_lem *lem, t_room **room);
 void	ft_block_link(int **sets, int i, int j);
 void    ft_path_overwrite(int i, t_path *path);
 int     ft_check_path_2(t_room **room, int **sets, t_lem *lem, t_path *path);
-void	ft_free_path(t_path **path, int i);
+void	ft_free_path(int count, t_path **path, int i);
 t_path	**ft_allocate_memory_path(int len, int count_rooms);
 void	ft_unblock_all(int **sets);
 void	ft_print_path(int *path);
@@ -100,7 +103,7 @@ void	add_path_in_matrix(t_path *path, int index, int **matrix_res);
 int		**ft_allocate_matrix_int_new(int x, int y);
 int		**ft_create_res_matrix(t_lem *lem, t_path *path, int iter);
 int     path_present(int *str, int ants);
-void	ft_print_res(int **matrix_res, t_lem *lem, t_room **room);
+void	ft_print_res(int **matrix_res, t_lem *lem, t_room **room, char **map);
 int		**ft_make_sets(char **map, t_room **room, t_lem *lem);
 
 
