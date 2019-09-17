@@ -6,66 +6,11 @@
 /*   By: waddam <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/26 16:24:10 by draudrau          #+#    #+#             */
-/*   Updated: 2019/09/17 21:14:18 by waddam           ###   ########.fr       */
+/*   Updated: 2019/09/17 23:08:25 by waddam           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lemin.h"
-#include <stdio.h>
-# include "./libft/libft.h"
-
-// static int	ft_read_file(const int fd, char **mas, char ***line)
-// {
-// 	char		*temp;
-// 	char		buf[F_BUFF_SIZE + 1];
-// 	int			ret;
-
-// 	ret = read(fd, buf, F_BUFF_SIZE);
-// 	if (ret == -1)
-// 		return (-1);
-// 	if (ret == 0 && **mas == '\0')
-// 		return (0);
-// 	if (ret == 0 && **mas != '\0')
-// 	{
-// 		**line = *mas;
-// 		*mas = NULL;
-// 		return (1);
-// 	}
-// 	buf[ret] = '\0';
-// 	temp = ft_strjoin(*mas, buf);
-// 	free(*mas);
-// 	*mas = temp;
-// 	return (2);
-// }
-
-// int			ft_fgnl(const int fd, char **line)
-// {
-// 	static char *mas[F_MAX_FD];
-// 	char		*temp;
-// 	char		buf[F_BUFF_SIZE + 1];
-// 	int			ret;
-
-// 	if (fd < 0 || fd > F_MAX_FD || F_BUFF_SIZE <= 0 || read(fd, buf, 0) == -1)
-// 		return (-1);
-// 	if (!mas[fd])
-// 		mas[fd] = ft_strnew(0);
-// 	while (!ft_strchr(mas[fd], F_DELIMITER))
-// 	{
-// 		if ((ret = ft_read_file(fd, &mas[fd], &line)) != 2)
-// 			return (ret);
-// 	}
-// 	if ((temp = ft_strchr(mas[fd], F_DELIMITER)) != NULL)
-// 	{
-// 		*line = ft_strsub(mas[fd], 0, temp - mas[fd]);
-// 		temp = ft_strsub(mas[fd], temp - mas[fd] + 1,
-// 			ft_strlen(mas[fd]) - (temp - mas[fd]));
-// 		free(mas[fd]);
-// 		mas[fd] = temp;
-// 	}
-// 	else
-// 		*line = ft_strdup(mas[fd]);
-// 	return (1);
-// }
 
 void ft_nul_fl(t_room **room, t_lem *lem)
 {
@@ -77,7 +22,6 @@ void ft_nul_fl(t_room **room, t_lem *lem)
 		i++;
 	}
 }
-
 
 int		ft_check_empty(int *tmp, t_lem *lem)
 {
@@ -133,7 +77,8 @@ int		*ft_alloc_qu(int len)
 {
 	int *tmp;
 
-	tmp = (int *)malloc(sizeof(int) * len);
+	if (!(tmp = (int *)malloc(sizeof(int) * len)))
+		ft_leave();
 	ft_memset(tmp, -1, len * 4);
 	return (tmp);
 }
@@ -153,202 +98,192 @@ void	ft_bfs2(int **sets, t_lem *lem, t_room **room, int *tmp)
 	}
 }
 
-void	ft_leave(void)
-{
-	printf("ERROR\n");
-	exit(0);
-}
+// void	ft_leave(void)
+// {
+// 	ft_printf("ERROR\n");
+// 	exit(0);
+// }
 
-void	ft_initialization_lem(t_lem *lem)
-{
-	ft_bzero(lem, sizeof(t_lem));
-}
+// void	ft_init(void *data, size_t size)
+// {
+// 	ft_bzero(data, size);
+// }
 
-void	ft_initialization_room(t_room *room)
-{
-	ft_bzero(room, sizeof(t_room));
-}
+// int		ft_valid_str(char *map)
+// {
+// 	int		i;
+// 	int		fl;
+// 	t_valid	val;
 
-void	ft_initialization_path(t_path *path)
-{
-	ft_bzero(path, sizeof(t_path));
-}
+// 	i = 0;
+// 	fl = 0;
 
-int		ft_valid_str(char *map)
-{
-	int		i;
-	int		fl;
-	t_valid	val;
+// 	val.name = 0;
+// 	val.count_x = 0;
+// 	val.count_y = 0;
+// 	val.defice = 0;
+// 	val.space = 0;
+// 	if (map[0] == 'L')
+// 		return (0);
+// 	else if (map[0] == '#')
+// 		return (3);
+// 	while (map[i])
+// 	{
+// 		if (map[i] == ' ' || map[i] == '-')
+// 		{
+// 			map[i] == ' ' ? val.space++ : val.defice++;
+// 			fl = 0;
+// 			i++;
+// 		}
+// 		else if ((map[i] != ' ' && fl == 0 && val.name < 1))
+// 		{
+// 			val.name++;
+// 			fl = 1;
+// 			i++;
+// 		}
+// 		else if ((map[i] != '-' && fl == 0 && val.name < 2 && val.defice == 1))
+// 		{
+// 			val.name++;
+// 			fl = 1;
+// 			i++;
+// 		}
+// 		else if ((map[i] != ' ' && map[i] != '-') && fl == 0 && val.space == 1) /* для валидации координаты x */
+// 		{
+// 			while(map[i] != ' ')
+// 			{
+// 				if (ft_isdigit(map[i]) == 1)
+// 					i++;
+// 				else if (map[i] == '\0' || ft_isdigit(map[i]) == 0)
+// 					return (0);
+// 			}
+// 			val.count_x++;
+// 		}
+// 		else if ((map[i] != ' ' && map[i] != '-') && fl == 0 && val.space == 2)
+// 		{
+// 			while(map[i] != '\0')
+// 			{
+// 				if (ft_isdigit(map[i]) == 1)
+// 					i++;
+// 				else
+// 					return (0);
+// 			}
+// 			val.count_y++;
+// 		}
+// 		else if (val.name == 1 && fl == 0 && (map[i] != ' ' && map[i] != '-') && val.defice == 1) /* валидируем name2 */
+// 		{
+// 			if (map[i] == '#' || map[i] == 'L')
+// 				return (0);
+// 			val.name++;
+// 			fl = 1;
+// 			i++;
+// 		}
+// 		else if ((map[i] != ' ' && map[i] != '-') && fl == 1) /* находимся в name */
+// 			i++;
+// 		else
+// 		    return (0);
+// 	}
+// 	if (val.space == 2 && val.name == 1 && val.count_x == 1 && val.count_y == 1)
+// 		return (4);
+// 	else if (val.defice == 1 && val.name == 2)
+// 		return (5);
+// 	else
+// 		return (0);
+// }
 
-	i = 0;
-	fl = 0;
+// int		ft_valid_sharp(char *map, t_lem *lem) /* проверяем start, end и comment*/
+// {
+// 	int i;
 
-	val.name = 0;
-	val.count_x = 0;
-	val.count_y = 0;
-	val.defice = 0;
-	val.space = 0;
-	if (map[0] == 'L')
-		return (0);
-	else if (map[0] == '#')
-		return (3);
-	while (map[i])
-	{
-		if (map[i] == ' ' || map[i] == '-')
-		{
-			map[i] == ' ' ? val.space++ : val.defice++;
-			fl = 0;
-			i++;
-		}
-		else if ((map[i] != ' ' && fl == 0 && val.name < 1))
-		{
-			val.name++;
-			fl = 1;
-			i++;
-		}
-		else if ((map[i] != '-' && fl == 0 && val.name < 2 && val.defice == 1))
-		{
-			val.name++;
-			fl = 1;
-			i++;
-		}
-		else if ((map[i] != ' ' && map[i] != '-') && fl == 0 && val.space == 1) /* для валидации координаты x */
-		{
-			while(map[i] != ' ')
-			{
-				if (ft_isdigit(map[i]) == 1)
-					i++;
-				else if (map[i] == '\0' || ft_isdigit(map[i]) == 0)
-					return (0);
-			}
-			val.count_x++;
-		}
-		else if ((map[i] != ' ' && map[i] != '-') && fl == 0 && val.space == 2)
-		{
-			while(map[i] != '\0')
-			{
-				if (ft_isdigit(map[i]) == 1)
-					i++;
-				else
-					return (0);
-			}
-			val.count_y++;
-		}
-		else if (val.name == 1 && fl == 0 && (map[i] != ' ' && map[i] != '-') && val.defice == 1) /* валидируем name2 */
-		{
-			if (map[i] == '#' || map[i] == 'L')
-				return (0);
-			val.name++;
-			fl = 1;
-			i++;
-		}
-		else if ((map[i] != ' ' && map[i] != '-') && fl == 1) /* находимся в name */
-			i++;
-		else
-		    return (0);
-	}
-	if (val.space == 2 && val.name == 1 && val.count_x == 1 && val.count_y == 1)
-		return (4);
-	else if (val.defice == 1 && val.name == 2)
-		return (5);
-	else
-		return (0);
-}
+// 	i = 0;
+// 	if (map == NULL)
+// 		ft_leave();
+// 	else if (ft_strcmp(map, "##start") == 0)
+// 	{
+// 		lem->start++;
+// 		return (1);
+// 	}
+// 	else if (ft_strcmp(map, "##end") == 0)
+// 	{
+// 		lem->end++;
+// 		return (2);
+// 	}
+// 	else if (map[0] == '#' && map[1] != '\0')
+// 		return (3);
+// 	return (0);
+// }
 
-int		ft_valid_resh(char *map, t_lem *lem) /* проверяем start, end и comment*/
-{
-	int i;
+// int		ft_valid_ants(char **map, t_lem *lem)
+// {
+// 	int	i;
+// 	int	j;
 
-	i = 0;
-	if (map == NULL)
-		ft_leave();
-	else if (ft_strcmp(map, "##start") == 0)
-	{
-		lem->start++;
-		return (1);
-	}
-	else if (ft_strcmp(map, "##end") == 0)
-	{
-		lem->end++;
-		return (2);
-	}
-	else if (map[0] == '#' && map[1] != '\0')
-		return (3);
-	return (0);
-}
+// 	i = 0;
+// 	while (map[i][0] == '#')
+// 		i++;
+// 	if (map[i][0] >= '1' && map[i][0] <= '9')
+// 	{
+// 		j = 0;
+// 		while (map[i][j] != '\0')
+// 		{
+// 			if (ft_isdigit(map[i][j]) == 1)
+// 				j++;
+// 			else
+// 				ft_leave();
+// 		}
+// 		lem->ants = ft_atoi(map[i]);
+// 		if (lem->ants < 1)
+// 			ft_leave();
+// 		i++;
+// 		return (i);
+// 	}
+// 	else
+// 	{
+// 		ft_leave();
+// 		return (0);
+// 	}
+// }
 
-int		ft_valid_ants(char **map, t_lem *lem)
-{
-	int	i;
-	int	j;
+// int		ft_validation(char **map, t_lem *lem)
+// {
+// 	int i;
+// 	int	valid_resh;
 
-	i = 0;
-	while (map[i][0] == '#')
-		i++;
-	if (map[i][0] >= '1' && map[i][0] <= '9')
-	{
-		j = 0;
-		while (map[i][j] != '\0')
-		{
-			if (ft_isdigit(map[i][j]) == 1)
-				j++;
-			else
-				ft_leave();
-		}
-		lem->ants = ft_atoi(map[i]);
-		if (lem->ants < 1)
-			ft_leave();
-		i++;
-		return (i);
-	}
-	else
-	{
-		ft_leave();
-		return (0);
-	}
-}
-
-int		ft_validation(char **map, t_lem *lem)
-{
-	int i;
-	int	valid_resh;
-
-	i = ft_valid_ants(map, lem);
-	while (map[i])
-	{
-		if (map[i][0] == '#')
-		{
-			valid_resh = ft_valid_resh(map[i], lem);
-			if (((valid_resh == 1 || valid_resh == 2) && (map[i + 1] != NULL)
-			&& (ft_valid_str(map[i + 1]) == 4)) || valid_resh == 3)
-				i++;
-			else if((valid_resh == 1 || valid_resh == 2) && (map[i + 1] != NULL)
-			&& ft_valid_resh(map[i + 1], lem))
-				i++;
-			else
-				ft_leave();
-		}
-		else if (ft_valid_str(map[i]) == 4)
-		{
-			lem->count_rooms++;
-			i++;
-		}
-		else if (ft_valid_str(map[i]) == 5)
-		{
-			lem->links++;
-			i++;
-		}
-		else
-			ft_leave();
-	}
-	if (lem->start == 1 && lem->end == 1 && lem->links > 0)
-		return (1);
-	else
-	{
-		ft_leave();
-		return (0);
-	}
-}
+// 	i = ft_valid_ants(map, lem);
+// 	while (map[i])
+// 	{
+// 		if (map[i][0] == '#')
+// 		{
+// 			valid_resh = ft_valid_sharp(map[i], lem);
+// 			if (((valid_resh == 1 || valid_resh == 2) && (map[i + 1] != NULL)
+// 			&& (ft_valid_str(map[i + 1]) == 4)) || valid_resh == 3)
+// 				i++;
+// 			else if((valid_resh == 1 || valid_resh == 2) && (map[i + 1] != NULL)
+// 			&& ft_valid_sharp(map[i + 1], lem))
+// 				i++;
+// 			else
+// 				ft_leave();
+// 		}
+// 		else if (ft_valid_str(map[i]) == 4)
+// 		{
+// 			lem->count_rooms++;
+// 			i++;
+// 		}
+// 		else if (ft_valid_str(map[i]) == 5)
+// 		{
+// 			lem->links++;
+// 			i++;
+// 		}
+// 		else
+// 			ft_leave();
+// 	}
+// 	if (lem->start == 1 && lem->end == 1 && lem->links > 0)
+// 		return (1);
+// 	else
+// 	{
+// 		ft_leave();
+// 		return (0);
+// 	}
+// }
 
 void	ft_free_room(t_room ***room, int i)
 {
@@ -376,7 +311,7 @@ t_room	**ft_allocate_memory(t_lem *lem)
 			ft_free_room(&room, i);
 			ft_leave();
 		}
-		ft_initialization_room(room[i]);
+		ft_init(room[i], sizeof(t_room));
 		i++;
 	}
 	room[i] = NULL;
@@ -390,31 +325,16 @@ void 	ft_write(char *map, t_room **room, int k)
 	co = 0;
 	while (map[co] != ' ')
 		co++;
-	room[k]->name = ft_strnew(co);
+	if (!(room[k]->name = ft_strnew(co)))
+	{
+		ft_leave();
+	}
 	ft_strncpy(room[k]->name, map, co);
 	room[k]->x = ft_atoi(&map[co]);
 	co++;
 	while (map[co] != ' ')
 		co++;
 	room[k]->y = ft_atoi(&map[co]);
-}
-
-char	**ft_allocate_matrix_char(int dim)
-{
-	int		i;
-	char	**matrix;
-
-	i = 0;
-	matrix = NULL;
-	matrix = (char **)malloc(sizeof(char *) * (dim + 1));
-	while (i < dim)
-	{
-		matrix[i] = ft_strnew(dim);
-		ft_memset(matrix[i], '0', dim);
-		i++;
-	}
-	matrix[i] = NULL;
-	return (matrix);
 }
 
 void	ft_free_matrix_int(int ***matrix, int i)
@@ -427,6 +347,41 @@ void	ft_free_matrix_int(int ***matrix, int i)
 	free(*matrix);
 	*matrix = NULL;
 }
+
+void	ft_free_matrix_char(char ***matrix, int i)
+{
+	while (--i >= 0)
+	{
+		free((*matrix)[i]);
+		(*matrix)[i] = NULL;
+	}
+	free(*matrix);
+	*matrix = NULL;
+}
+
+char	**ft_allocate_matrix_char(int dim)
+{
+	int		i;
+	char	**matrix;
+
+	i = 0;
+	matrix = NULL;
+	if (!(matrix = (char **)malloc(sizeof(char *) * (dim + 1))))
+		ft_leave();
+	while (i < dim)
+	{
+		if (!(matrix[i] = ft_strnew(dim)))
+		{
+			ft_free_matrix_char(&matrix, i);
+			ft_leave();
+		}
+		ft_memset(matrix[i], '0', dim);
+		i++;
+	}
+	matrix[i] = NULL;
+	return (matrix);
+}
+
 
 int		**ft_allocate_matrix_int(int dim)
 {
@@ -509,7 +464,6 @@ int ft_check_repeat(t_room **room, t_lem *lem)
 		{
 			if(ft_strcmp(tmp, room[k]->name) == 0 && k != i)
 			{
-				printf("Повтор\n");
 				return (1);
 			}
 			k++;
@@ -544,17 +498,17 @@ t_room 	**ft_record(char **map, t_lem *lem)
 	room = ft_allocate_memory(lem);
 	while (map[i])
 	{
-		valid_resh = ft_valid_resh(map[i], lem);
+		valid_resh = ft_valid_sharp(map[i], lem);
 		if (map[i][0] == '#' && valid_resh == 1)
 		{
-			while (ft_valid_resh(map[i + 1], lem) == 3)
+			while (ft_valid_sharp(map[i + 1], lem) == 3)
 				i++;
 			i++;
 		    ft_write(map[i], room, 0);
 		}
 		else if ((map[i][0] == '#' && valid_resh == 2))
 		{
-			while (ft_valid_resh(map[i + 1], lem) == 3)
+			while (ft_valid_sharp(map[i + 1], lem) == 3)
 				i++;
 			i++;
 			ft_write(map[i], room, lem->count_rooms - 1);
@@ -574,70 +528,19 @@ t_room 	**ft_record(char **map, t_lem *lem)
 	return (room);
 }
 
-// void			parse_map(t_lem *lem)
+// int		ft_strsrch(char *str, char chr)
 // {
-// 	char	*line;
+// 	int	i;
 
-// 	while ((ret = read(0, buff, BUFF_SIZE)) > 0)
+// 	i = 0;
+// 	while (str[i + 1] != '\0')
 // 	{
-// 		(*lem).is_end = 0;
-// 		(*lem).is_start = 0;
-// 		if (line[0] == '\0')
-// 			break ;
-// 		if (line[0] == '#' && line[1] == '#')
-// 		{
-// 			manage_start_end(&line, lem);
-// 		}
-// 		parse_map_2(lem, &line);
-// 		ft_strdel(&line);
+// 		if (str[i] == chr && str[i + 1] == chr)
+// 			return (1);
+// 		i++;
 // 	}
+// 	return (0);
 // }
-
-int		ft_strsrch(char *str, char chr)
-{
-	int	i;
-
-	i = 0;
-	while (str[i + 1] != '\0')
-	{
-		if (str[i] == chr && str[i + 1] == chr)
-			return (1);
-		i++;
-	}
-	return (0);
-}
-
-char	**ft_read_map()
-{
-	int		ret;
-    char	buff[BUFF_SIZE + 1];
-	char	*del;
-	char	*temp;
-	int 	fl;
-	char	**map;
-
-	fl = 0;
-	temp = ft_strnew(0);
-	while ((ret = read(0, buff, BUFF_SIZE)) > 0)
-	{
-		buff[ret] = '\0';
-		if (ft_strsrch(buff, '\n') == 1)
-		{
-			ft_leave();
-		}
-		del = temp;
-		temp = ft_strjoin(temp, buff);
-		if (buff[0] == '\0')
-			break ;
-		free(del);
-		fl = 1;
-	}
-	if (fl == 0)
-		ft_leave();
-	map = ft_strsplit(temp, '\n');
-	free(temp);
-	return (map);
-}
 
 // char	**ft_read_map()
 // {
@@ -649,14 +552,15 @@ char	**ft_read_map()
 // 	char	**map;
 
 // 	fl = 0;
-// 	temp = ft_strnew(0);
+// 	if (!(temp = ft_strnew(0)))
+// 		ft_leave();
 // 	while ((ret = read(0, buff, BUFF_SIZE)) > 0)
 // 	{
 // 		buff[ret] = '\0';
+// 		if (ft_strsrch(buff, '\n') == 1)
+// 			ft_leave();
 // 		del = temp;
 // 		temp = ft_strjoin(temp, buff);
-// 		if (buff[0] == '\0')
-// 			break ;
 // 		free(del);
 // 		fl = 1;
 // 	}
@@ -683,7 +587,8 @@ int		ft_search_name(char **map, t_room **room, char end)
 		(*map)++;
 		len_name++;
 	}
-	name = ft_strnew(len_name);
+	if (!(name = ft_strnew(len_name)))
+		ft_leave();
 	ft_strncpy(name, temp, len_name);
 	while (room[index])
 	{
@@ -704,16 +609,10 @@ void	ft_write_links(char *map, t_room **room, int **set)
 	int		i;
 
 	if ((name1_ind = ft_search_name(&map, room, '-')) == -1)
-	{
-		//зафришить все
 		ft_leave();
-	}
 	map++;
 	if ((name2_ind = ft_search_name(&map, room, '\0')) == -1)
-	{
-		//зафришить все
 		ft_leave();
-	}
 	i = 0;
 	while (set[name1_ind][i] != -1)
 		i++;
@@ -841,7 +740,6 @@ void		ft_block_link(int **sets, int i, int j)
 	sets[tmp][k] = sets[tmp][k] - BLOCK;
 }
 
-
 void ft_path_overwrite(int i, t_path *path)
 {
 	int j;
@@ -926,7 +824,6 @@ void	ft_free_path(int count, t_path **path, int i)
 	while (--i >= 0)
 	{
 		tmp = path[i]->path;
-		// ft_free_matrix_int(&tmp, len);
 		ft_free_matrix_i(tmp, count);
 		free(path[i]);
 	}
@@ -948,11 +845,10 @@ t_path		**ft_allocate_memory_path(int len, int count_rooms)
 			ft_free_path(count_rooms, path, i);
 			ft_leave();
 		}
-		ft_initialization_path(path[i]);
+		ft_init(path[i], sizeof(t_path));
 		path[i]->path = ft_allocate_matrix_int(count_rooms);
 		i++;
 	}
-	//path[i] = NULL;
 	return (path);
 }
 
@@ -973,18 +869,6 @@ void		ft_unblock_all(int **sets)
 		}
 		i++;
 	}
-}
-
-void	ft_print_path(int *path)
-{
-	int i = 0;
-
-	while (path[i] > -1)
-	{
-		printf("%d ", path[i]);
-		i++;
-	}
-	printf("\n");
 }
 
 int		*ft_first_path(t_path *path, t_room **room, t_lem *lem, int **sets, int *tmp)
@@ -1042,7 +926,6 @@ void		ft_del_info_path(t_path *path, t_lem *lem)
 		ft_memset(path->path[i], -1, lem->count_rooms * 4);
 		i++;
 	}
-
 }
 
 int			choose_set_of_paths(t_path **path)
@@ -1299,7 +1182,7 @@ void		ft_print_res(int **matrix_res, t_lem *lem, t_room **room, char **map)
 		j = 0;
 		ft_printf("\n");
 	}
-	// printf("count_iter=%d\n", i);
+	ft_printf("count_iter=%d\n", i);
 }
 
 int		**ft_make_sets(char **map, t_room **room, t_lem *lem)
@@ -1384,8 +1267,8 @@ int			main(void)
 	int		**matrix_res;
 
 
-	ft_initialization_lem(&lem);
-	map = ft_read_map();
+	ft_init(&lem, sizeof(t_lem));
+	ft_read_map(&map);
 	ft_validation(map, &lem) == 1 ? room = ft_record(map, &lem) : exit (0);
 	sets = ft_make_sets(map, room, &lem);
 	tmp = ft_alloc_qu(lem.count_rooms + 3);
@@ -1400,9 +1283,6 @@ int			main(void)
 	ft_put_ants_in_path(&lem, path[k]);
 	matrix_res = ft_create_res_matrix(&lem, path[k], path[k]->res);
 	ft_print_res(matrix_res, &lem, room, map);
-
-	//ft_free_map(map);
-	// ft_free_room(&room, lem.count_rooms);
 	ft_free_sets(sets, &lem);
 	ft_free_rooms(room, &lem);
 	ft_free_res_matrix(matrix_res, path[k]->res);

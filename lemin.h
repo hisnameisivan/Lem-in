@@ -5,9 +5,9 @@
 # define F_BUFF_SIZE 500
 # define F_MAX_FD 999
 # define F_DELIMITER '\n'
-#include <stdio.h>
+# include "./libft/libft.h"
 
-typedef struct      s_room
+typedef struct		s_room
 {
     char            *name;
     int             x;
@@ -18,16 +18,12 @@ typedef struct      s_room
 
 typedef struct      s_lem
 {
-    int             i;
-    int             j;
-    int             k;
-    int             l;
     int             n;
-    int             ants;
-    int             count_rooms;
+	int				vld;
     int             start;
     int             end;
-    int             len;
+    int             ants;
+    int             count_rooms;
     int             links;
 }                   t_lem;
 
@@ -49,10 +45,23 @@ typedef struct      s_path
     int             **path;
 }                   t_path;
 
-void		ft_free_str(int **sets, int *path);
+void	ft_init(void *data, size_t size);
+void	ft_leave(void);
+void	ft_read_map(char ***map);
 
+int		ft_validation(char **map, t_lem *lem);
+int		ft_valid_sharp(char *map, t_lem *lem);
+int		ft_valid_ants(char **map, t_lem *lem);
+
+int		ft_valid_str(char *map);
+
+void	ft_helper_1(char map_i, t_valid *val, int *i, int *fl);
+void	ft_helper_2(t_valid *val, int *i, int *fl);
+int		ft_helper_3(char map_i, t_valid *val, int *i);
+int		ft_helper_4(char map_i, t_valid *val, int *i);
+
+void	ft_free_str(int **sets, int *path);
 void	ft_free_map(char ***map);
-
 void    ft_nul_fl(t_room **room, t_lem *lem);
 int		ft_check_empty(int *tmp, t_lem *lem);
 void	ft_add_neighbors(int **sets, t_room **room, int *tmp);
@@ -77,7 +86,7 @@ void	ft_find(int ***tmp, int i, int j, int k);
 int     ft_check_repeat(t_room **room, t_lem *lem);
 int		ft_no_start_end(t_room **room, t_lem *lem);
 t_room 	**ft_record(char **map, t_lem *lem);
-char	**ft_read_map();
+// char	**ft_read_map();
 int		ft_search_name(char **map, t_room **room, char end);
 void	ft_write_links(char *map, t_room **room, int **set);
 void	ft_count_iter(t_path *path, t_lem *lem);
@@ -105,10 +114,6 @@ int		**ft_create_res_matrix(t_lem *lem, t_path *path, int iter);
 int     path_present(int *str, int ants);
 void	ft_print_res(int **matrix_res, t_lem *lem, t_room **room, char **map);
 int		**ft_make_sets(char **map, t_room **room, t_lem *lem);
-
-
-
-
 
 
 # endif
