@@ -6,7 +6,7 @@
 /*   By: waddam <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/26 16:24:10 by draudrau          #+#    #+#             */
-/*   Updated: 2019/09/17 23:08:25 by waddam           ###   ########.fr       */
+/*   Updated: 2019/09/19 01:13:07 by waddam           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void	ft_add_neighbors(int **sets, t_room **room, int *tmp)
 		k++;
 	while (sets[i][j] != -1)
 	{
-		if (sets[i][j] >= 0 && sets[i][j] < BLOCK / 2 && room[sets[i][j]]->fl == 0)
+		if (sets[i][j] >= 0 && sets[i][j] < BLOCK && room[sets[i][j]]->fl == 0)
 		{
 			room[sets[i][j]]->fl = 1;
 			tmp[k] = sets[i][j];
@@ -73,15 +73,15 @@ void	ft_del_left(int *tmp)
 	tmp[i] = -1;
 }
 
-int		*ft_alloc_qu(int len)
-{
-	int *tmp;
+// int		*ft_alloc_qu(int len)
+// {
+// 	int	*tmp;
 
-	if (!(tmp = (int *)malloc(sizeof(int) * len)))
-		ft_leave();
-	ft_memset(tmp, -1, len * 4);
-	return (tmp);
-}
+// 	if (!(tmp = (int *)malloc(sizeof(int) * len)))
+// 		ft_leave();
+// 	ft_memset(tmp, -1, len * 4);
+// 	return (tmp);
+// }
 
 void	ft_bfs2(int **sets, t_lem *lem, t_room **room, int *tmp)
 {
@@ -296,27 +296,27 @@ void	ft_free_room(t_room ***room, int i)
 	*room = NULL;
 }
 
-t_room	**ft_allocate_memory(t_lem *lem)
-{
-	int		i;
-	t_room	**room;
+// t_room	**ft_allocate_memory(t_lem *lem)
+// {
+// 	int		i;
+// 	t_room	**room;
 
-	i = 0;
-	if (!(room = (t_room**)malloc(sizeof(t_room*) * (lem->count_rooms + 1))))
-		ft_leave();
-	while (i < lem->count_rooms)
-	{
-		if (!(room[i] = (t_room *)malloc(sizeof(t_room))))
-		{
-			ft_free_room(&room, i);
-			ft_leave();
-		}
-		ft_init(room[i], sizeof(t_room));
-		i++;
-	}
-	room[i] = NULL;
-	return (room);
-}
+// 	i = 0;
+// 	if (!(room = (t_room**)malloc(sizeof(t_room*) * (lem->count_rooms + 1))))
+// 		ft_leave();
+// 	while (i < lem->count_rooms)
+// 	{
+// 		if (!(room[i] = (t_room *)malloc(sizeof(t_room))))
+// 		{
+// 			ft_free_room(&room, i);
+// 			ft_leave();
+// 		}
+// 		ft_init(room[i], sizeof(t_room));
+// 		i++;
+// 	}
+// 	room[i] = NULL;
+// 	return (room);
+// }
 
 void 	ft_write(char *map, t_room **room, int k)
 {
@@ -337,7 +337,7 @@ void 	ft_write(char *map, t_room **room, int k)
 	room[k]->y = ft_atoi(&map[co]);
 }
 
-void	ft_free_matrix_int(int ***matrix, int i)
+void	ft_free_matrix(int ***matrix, int i)
 {
 	while (--i >= 0)
 	{
@@ -359,51 +359,51 @@ void	ft_free_matrix_char(char ***matrix, int i)
 	*matrix = NULL;
 }
 
-char	**ft_allocate_matrix_char(int dim)
-{
-	int		i;
-	char	**matrix;
+// char	**ft_allocate_matrix_char(int dim) // НЕ ИСПОЛЬЗУЕТСЯ
+// {
+// 	int		i;
+// 	char	**matrix;
 
-	i = 0;
-	matrix = NULL;
-	if (!(matrix = (char **)malloc(sizeof(char *) * (dim + 1))))
-		ft_leave();
-	while (i < dim)
-	{
-		if (!(matrix[i] = ft_strnew(dim)))
-		{
-			ft_free_matrix_char(&matrix, i);
-			ft_leave();
-		}
-		ft_memset(matrix[i], '0', dim);
-		i++;
-	}
-	matrix[i] = NULL;
-	return (matrix);
-}
+// 	i = 0;
+// 	matrix = NULL;
+// 	if (!(matrix = (char **)malloc(sizeof(char *) * (dim + 1))))
+// 		ft_leave();
+// 	while (i < dim)
+// 	{
+// 		if (!(matrix[i] = ft_strnew(dim)))
+// 		{
+// 			ft_free_matrix_char(&matrix, i);
+// 			ft_leave();
+// 		}
+// 		ft_memset(matrix[i], '0', dim);
+// 		i++;
+// 	}
+// 	matrix[i] = NULL;
+// 	return (matrix);
+// }
 
 
-int		**ft_allocate_matrix_int(int dim)
-{
-	int		i;
-	int		**matrix;
+// int		**ft_allocate_matrix_int(int dim)
+// {
+// 	int		i;
+// 	int		**matrix;
 
-	i = 0;
-	dim++;
-	if (!(matrix = (int **)malloc(sizeof(int *) * dim)))
-		ft_leave();
-	while (i < dim)
-	{
-		if (!(matrix[i] = (int *)malloc(sizeof(int) * dim)))
-		{
-			ft_free_matrix_int(&matrix, i);
-			ft_leave();
-		}
-		ft_memset(matrix[i], -1, dim * 4);
-		i++;
-	}
-	return (matrix);
-}
+// 	i = 0;
+// 	dim++;
+// 	if (!(matrix = (int **)malloc(sizeof(int *) * dim)))
+// 		ft_leave();
+// 	while (i < dim)
+// 	{
+// 		if (!(matrix[i] = (int *)malloc(sizeof(int) * dim)))
+// 		{
+// 			ft_free_matrix_int(&matrix, i);
+// 			ft_leave();
+// 		}
+// 		ft_memset(matrix[i], -1, dim * 4);
+// 		i++;
+// 	}
+// 	return (matrix);
+// }
 
 void	ft_create_str(char *matrix, t_lem *lem, int ***tmp, int k)
 {
@@ -449,84 +449,82 @@ void	ft_find(int ***tmp, int i, int j, int k)
 	}
 }
 
-int ft_check_repeat(t_room **room, t_lem *lem)
-{
-	int		i;
-	int		k;
-	char	tmp[1000];
+// int ft_check_repeat(t_room **room, t_lem *lem)
+// {
+// 	int		i;
+// 	int		k;
+// 	char	tmp[1000];
 
-	i = 0;
-	while (i < lem->count_rooms)
-	{
-		k = 0;
-		ft_strcpy(tmp, room[i]->name);
-		while (k < lem->count_rooms)
-		{
-			if(ft_strcmp(tmp, room[k]->name) == 0 && k != i)
-			{
-				return (1);
-			}
-			k++;
-		}
-		i++;
-	}
-	return (0);
-}
+// 	i = 0;
+// 	while (i < lem->count_rooms)
+// 	{
+// 		k = 0;
+// 		ft_strcpy(tmp, room[i]->name);
+// 		while (k < lem->count_rooms)
+// 		{
+// 			if(ft_strcmp(tmp, room[k]->name) == 0 && k != i)
+// 				return (1);
+// 			k++;
+// 		}
+// 		i++;
+// 	}
+// 	return (0);
+// }
 
-int		ft_no_start_end(t_room **room, t_lem *lem)
-{
-	int tmp;
+// int		ft_no_start_end(t_room **room, t_lem *lem)
+// {
+// 	int tmp;
 
-	tmp = lem->count_rooms - 1;
-	if (room[0]->name == NULL || room[tmp]->name == NULL)
-		return (1);
-	else if(ft_strcmp(room[0]->name, room[tmp]->name) == 0)
-		return (1);
-	else
-		return (0);
-}
+// 	tmp = lem->count_rooms - 1;
+// 	if (room[0]->name == NULL || room[tmp]->name == NULL)
+// 		return (1);
+// 	else if(ft_strcmp(room[0]->name, room[tmp]->name) == 0)
+// 		return (1);
+// 	else
+// 		return (0);
+// }
 
-t_room 	**ft_record(char **map, t_lem *lem)
-{
-	int			i;
-	int			k;
-	int			valid_resh;
-	t_room		**room;
+// t_room 	**ft_record(char **map, t_lem *lem)
+// {
+// 	int			i;
+// 	int			k;
+// 	int			valid_resh;
+// 	t_room		**room;
 
-	i = 0;
-	k = 1;
-	room = ft_allocate_memory(lem);
-	while (map[i])
-	{
-		valid_resh = ft_valid_sharp(map[i], lem);
-		if (map[i][0] == '#' && valid_resh == 1)
-		{
-			while (ft_valid_sharp(map[i + 1], lem) == 3)
-				i++;
-			i++;
-		    ft_write(map[i], room, 0);
-		}
-		else if ((map[i][0] == '#' && valid_resh == 2))
-		{
-			while (ft_valid_sharp(map[i + 1], lem) == 3)
-				i++;
-			i++;
-			ft_write(map[i], room, lem->count_rooms - 1);
-		}
-		else if (ft_valid_str(map[i]) == 4)
-		{
-			ft_write(map[i], room, k);
-            k++;
-		}
-		i++;
-	}
-	if (ft_check_repeat(room, lem) == 1 || ft_no_start_end(room, lem) == 1)
-	{
-		// надо зафришить комнаты
-		ft_leave();
-	}
-	return (room);
-}
+// 	i = 0;
+// 	k = 1;
+// 	room = ft_allocate_memory(lem);
+// 	while (map[i])
+// 	{
+// 		valid_resh = ft_valid_sharp(map[i], lem);
+// 		if (map[i][0] == '#' && valid_resh == 1)
+// 		{
+// 			while (ft_valid_sharp(map[i + 1], lem) == 3)
+// 				i++;
+// 			i++;
+// 		    ft_write(map[i], room, 0);
+// 		}
+// 		else if ((map[i][0] == '#' && valid_resh == 2))
+// 		{
+// 			while (ft_valid_sharp(map[i + 1], lem) == 3)
+// 				i++;
+// 			i++;
+// 			ft_write(map[i], room, lem->count_rooms - 1);
+// 		}
+// 		else if (ft_valid_str(map[i]) == 4)
+// 		{
+// 			ft_write(map[i], room, k);
+//             k++;
+// 		}
+// 		i++;
+// 	}
+// 	if (ft_check_repeat(room, lem) == 1 || ft_no_start_end(room, lem) == 1)
+// 	{
+// 		// надо зафришить комнаты
+// 		ft_leave();
+// 	}
+// 	return (room);
+// }
 
 // int		ft_strsrch(char *str, char chr)
 // {
@@ -571,58 +569,58 @@ t_room 	**ft_record(char **map, t_lem *lem)
 // 	return (map);
 // }
 
-int		ft_search_name(char **map, t_room **room, char end)
-{
-	int		len_name;
-	int		index;
-	char	*name;
-	char	*temp;
+// int		ft_search_name(char **map, t_room **room, char end)
+// {
+// 	int		len_name;
+// 	int		index;
+// 	char	*name;
+// 	char	*temp;
 
-	len_name = 0;
-	index = 0;
-	temp = *map;
-	name = NULL;
-	while (**map != end)
-	{
-		(*map)++;
-		len_name++;
-	}
-	if (!(name = ft_strnew(len_name)))
-		ft_leave();
-	ft_strncpy(name, temp, len_name);
-	while (room[index])
-	{
-		if (ft_strcmp(name, room[index]->name) == 0)
-			break ;
-		index++;
-	}
-	free(name);
-	if (room[index] == NULL)
-		return (-1);
-	return (index);
-}
+// 	len_name = 0;
+// 	index = 0;
+// 	temp = *map;
+// 	name = NULL;
+// 	while (**map != end)
+// 	{
+// 		(*map)++;
+// 		len_name++;
+// 	}
+// 	if (!(name = ft_strnew(len_name)))
+// 		ft_leave();
+// 	ft_strncpy(name, temp, len_name);
+// 	while (room[index])
+// 	{
+// 		if (ft_strcmp(name, room[index]->name) == 0)
+// 			break ;
+// 		index++;
+// 	}
+// 	free(name);
+// 	return (room[index] == NULL ? -1 : index); // не уверена, что правильно составила тернарник
+// 	// if (room[index] == NULL)
+// 	// 	return (-1);
+// 	// return (index);
+// }
 
-void	ft_write_links(char *map, t_room **room, int **set)
-{
-	int		name1_ind;
-	int		name2_ind;
-	int		i;
+// void	ft_write_links(char *map, t_room **room, int **set)
+// {
+// 	int		name1_ind;
+// 	int		name2_ind;
+// 	int		i;
 
-	if ((name1_ind = ft_search_name(&map, room, '-')) == -1)
-		ft_leave();
-	map++;
-	if ((name2_ind = ft_search_name(&map, room, '\0')) == -1)
-		ft_leave();
-	i = 0;
-	while (set[name1_ind][i] != -1)
-		i++;
-	set[name1_ind][i] = name2_ind;
-	i = 0;
-	while (set[name2_ind][i] != -1)
-		i++;
-	set[name2_ind][i] = name1_ind;
-}
-
+// 	if ((name1_ind = ft_search_name(&map, room, '-')) == -1)
+// 		ft_leave();
+// 	map++;
+// 	if ((name2_ind = ft_search_name(&map, room, '\0')) == -1)
+// 		ft_leave();
+// 	i = 0;
+// 	while (set[name1_ind][i] != -1)
+// 		i++;
+// 	set[name1_ind][i] = name2_ind;
+// 	i = 0;
+// 	while (set[name2_ind][i] != -1)
+// 		i++;
+// 	set[name2_ind][i] = name1_ind;
+// }
 
 void	ft_count_iter(t_path *path, t_lem *lem)
 {
@@ -630,13 +628,11 @@ void	ft_count_iter(t_path *path, t_lem *lem)
 	int j;
 	int count_iter;
 	int	count_steps;
-	int	count_paths;
 
 	i = 0;
-	j = 0;
 	count_iter = 0;
 	count_steps = 0;
-	count_paths = 0;
+	path->count_paths = 0;
 	if (path->path[0][0] == -1)
 		return ;
 	while (path->path[i][0] >= 0)
@@ -647,12 +643,11 @@ void	ft_count_iter(t_path *path, t_lem *lem)
 			count_steps++;
 			j++;
 		}
-		count_paths++;
+		path->count_paths++;
 		i++;
 	}
-	count_steps = count_steps - count_paths;
-	path->res = ((count_steps + (lem->ants - count_paths)) / count_paths);
-	path->count_paths = count_paths;
+	count_steps = count_steps - path->count_paths;
+	path->res = ((count_steps + (lem->ants - path->count_paths)) / path->count_paths);
 }
 
 void	ft_del_link(int **sets, int i, int j)
@@ -684,7 +679,7 @@ int ft_units_present(int *str)
     i = 0;
     while (str[i] != -1)
     {
-        if (str[i] >= 0 && str[i] < BLOCK / 2)
+        if (str[i] >= 0 && str[i] < BLOCK)
             return(1);
         else
             i++;
@@ -697,22 +692,20 @@ int		ft_next_link_2(int *str, t_lem *lem, t_room **room)
 	int j;
 	int tmp;
 	int lvl;
-	int fl;
 
 	j = 0;
-	fl = 0;
-	lem->count_rooms = lem->count_rooms;
+	lem->fl = 0;
 	while (str[j] != -1)
 	{
-		if (str[j] >= 0  && str[j] <= BLOCK / 2)
+		if (str[j] >= 0  && str[j] < BLOCK)
 		{
-			if (fl == 0)
+			if (lem->fl == 0)
 			{
 				tmp = str[j];
 				lvl = room[str[j]]->lvl;
-				fl = 1;
+				lem->fl = 1;
 			}
-			else if (fl == 1 && (room[str[j]]->lvl) < lvl)
+			else if (lem->fl == 1 && (room[str[j]]->lvl) < lvl)
 			{
 				tmp = str[j];
 				lvl = room[str[j]]->lvl;
@@ -830,27 +823,27 @@ void	ft_free_path(int count, t_path **path, int i)
 	free(path);
 }
 
-t_path		**ft_allocate_memory_path(int len, int count_rooms)
-{
-	int		i;
-	t_path	**path;
+// t_path		**ft_allocate_memory_path(int len, int count_rooms)
+// {
+// 	int		i;
+// 	t_path	**path;
 
-	i = 0;
-	if (!(path = (t_path**)malloc(sizeof(t_path*) * (len))))
-		ft_leave();
-	while (i < len)
-	{
-		if (!(path[i] = (t_path*)malloc(sizeof(t_path))))
-		{
-			ft_free_path(count_rooms, path, i);
-			ft_leave();
-		}
-		ft_init(path[i], sizeof(t_path));
-		path[i]->path = ft_allocate_matrix_int(count_rooms);
-		i++;
-	}
-	return (path);
-}
+// 	i = 0;
+// 	if (!(path = (t_path**)malloc(sizeof(t_path*) * (len))))
+// 		ft_leave();
+// 	while (i < len)
+// 	{
+// 		if (!(path[i] = (t_path*)malloc(sizeof(t_path))))
+// 		{
+// 			ft_free_path(count_rooms, path, i);
+// 			ft_leave();
+// 		}
+// 		ft_init(path[i], sizeof(t_path));
+// 		path[i]->path = ft_alloc_matrix(count_rooms);
+// 		i++;
+// 	}
+// 	return (path);
+// }
 
 void		ft_unblock_all(int **sets)
 {
@@ -863,7 +856,7 @@ void		ft_unblock_all(int **sets)
 		j = 0;
 		while (sets[i][j] != -1)
 		{
-			if (sets[i][j] < -BLOCK / 2)
+			if (sets[i][j] < -1)
 				sets[i][j] = sets[i][j] + BLOCK;
 			j++;
 		}
@@ -902,7 +895,7 @@ void		ft_unblock_link(int **sets, char sign)
 		j = 0;
 		while (sets[i][j] != -1)
 		{
-			if (sets[i][j] < -BLOCK / 2 && sign == '7')
+			if (sets[i][j] < -1 && sign == '7')
 				sets[i][j] = sets[i][j] + BLOCK;
 			else if (sets[i][j] > BLOCK && sign == '9')
 				sets[i][j] = sets[i][j] - BLOCK;
@@ -937,76 +930,99 @@ int			choose_set_of_paths(t_path **path)
 	return (tmp);
 }
 
-void		ft_clear_matrix_int(int **matrix, int len)
-{
-	int i = 0;
+// void		ft_clear_matrix_int(int **matrix, int len) // НИГДЕ НЕ ИСПОЛЬЗУЕТСЯ
+// {
+// 	int i = 0;
 
-	while (i < len)
-	{
-		ft_memset(matrix[i], -1, len * 4);
+// 	while (i < len)
+// 	{
+// 		ft_memset(matrix[i], -1, len * 4);
+// 		i++;
+// 	}
+// }
+
+// void		ft_all_1(t_path **path, t_lem *lem, )
+// {
+// 	path[k]->i = 0;
+// 		ft_del_link(lem->sets, first[i], first[i + 1]);
+// 		ft_nul_fl(room, lem);
+// 		ft_bfs2(lem->sets, lem, room, temp);
+// 		ft_unblock_link(lem->sets, '7');
+// 		if (ft_check_path_2(room, lem->sets, lem, path[k]) == 0)
+// 		{
+// 			ft_unblock_link(lem->sets, '7');
+// 			i++;
+// 			len--;
+// 			continue ;
+// 		}
+
+// }
+
+void		ft_all_flag(int *flag, t_lem *lem, t_path **path, int *i)
+{
+		ft_count_iter(path[lem->k], lem);
+		if ((*flag) == 1 && ((lem->len) - 1))
+		{
+			lem->k = (path[1]->res > path[2]->res ? 1 : 2);
+			ft_del_info_path(path[lem->k], lem);
+		}
+		if ((*flag) == 0)
+		{
+			(*flag) = 1;
+			lem->k++;
+		}
+		lem->len--;
 		i++;
+		ft_unblock_all(lem->sets);
+
+}
+
+void		ft_cycle(t_room ** room, t_lem *lem, t_path **path, int *qu)
+{
+	while (1)
+	{
+		ft_nul_fl(room, lem);
+		ft_bfs2(lem->sets, lem, room, qu);
+		ft_unblock_link(lem->sets, '7');
+		path[lem->k]->i++;
+		path[lem->k]->j = 0;
+		if (ft_check_path_2(room, lem->sets, lem, path[lem->k]) == 0)
+			break ;
 	}
 }
 
-int		ft_all_paths(t_path **path, t_room **room, t_lem *lem, int **sets, int *first, int *temp)
+void		ft_all_paths(t_path **path, t_room **room, t_lem *lem, int *qu)
 {
 	int		i;
-	int		k;
-	int		len;
 	int		flag;
+	int		*first;
 
 	i = 1;
-	k = 1;
-	len = 0;
+	lem->k = 1;
+	lem->len = 0;
 	flag = 0;
-
-	while (first[len] >= 0)
-		len++;
-	len = len - 3;
-	while (len > 0)
+	first = ft_first_path(path[0], room, lem, lem->sets, qu);
+	while (first[lem->len] >= 0)
+		lem->len++;
+	lem->len = lem->len - 3;
+	while (lem->len > 0)
 	{
-		path[k]->i = 0;
-		ft_del_link(sets, first[i], first[i + 1]);
+		path[lem->k]->i = 0;
+		ft_del_link(lem->sets, first[i], first[i + 1]);
 		ft_nul_fl(room, lem);
-		ft_bfs2(sets, lem, room, temp);
-		ft_unblock_link(sets, '7');
-		if (ft_check_path_2(room, sets, lem, path[k]) == 0)
+		ft_bfs2(lem->sets, lem, room, qu);
+		ft_unblock_link(lem->sets, '7');
+		if (ft_check_path_2(room, lem->sets, lem, path[lem->k]) == 0)
 		{
-			ft_unblock_link(sets, '7');
+			ft_unblock_link(lem->sets, '7');
 			i++;
-			len--;
+			lem->len--;
 			continue ;
 		}
-
-		while (1)
-		{
-			ft_nul_fl(room, lem);
-			ft_bfs2(sets, lem, room, temp);
-			ft_unblock_link(sets, '7');
-			path[k]->i++;
-			path[k]->j = 0;
-			if (ft_check_path_2(room, sets, lem, path[k]) == 0)
-				break ;
-			//else
-			//	ft_free_str(sets, path[k]->path[path[k]->i]); /* заменяем "1" на "9" */
-		}
-		ft_count_iter(path[k], lem);
-		if (flag == 1 && (len - 1))
-		{
-			k = (path[1]->res > path[2]->res ? 1 : 2);
-			ft_del_info_path(path[k], lem);
-		}
-		if (flag == 0)
-		{
-			flag = 1;
-			k++;
-		}
-		len--;
-		i++;
-		ft_unblock_all(sets);
+		ft_cycle(room, lem, path, qu);
+		ft_all_flag(&flag, lem, path, &i);
 	}
-	k = choose_set_of_paths(path);
-	return(k);
+	lem->k = choose_set_of_paths(path);
 }
 
 void		ft_reverse_path(t_path *path)
@@ -1080,26 +1096,26 @@ void		add_path_in_matrix(t_path *path, int index, int **matrix_res)
 }
 
 
-int		**ft_allocate_matrix_int_new(int x, int y)
-{
-	int		i;
-	int		**matrix;
+// int		**ft_allocate_matrix_int_new(int x, int y)
+// {
+// 	int		i;
+// 	int		**matrix;
 
-	i = 0;
-	if (!(matrix = (int **)malloc(sizeof(int *) * y)))
-		ft_leave();
-	while (i < y)
-	{
-		if (!(matrix[i] = (int *)malloc(sizeof(int) * x)))
-		{
-			ft_free_matrix_int(&matrix, i);
-			ft_leave();
-		}
-		ft_memset(matrix[i], -1, x * 4);
-		i++;
-	}
-	return (matrix);
-}
+// 	i = 0;
+// 	if (!(matrix = (int **)malloc(sizeof(int *) * y)))
+// 		ft_leave();
+// 	while (i < y)
+// 	{
+// 		if (!(matrix[i] = (int *)malloc(sizeof(int) * x)))
+// 		{
+// 			ft_free_matrix(&matrix, i);
+// 			ft_leave();
+// 		}
+// 		ft_memset(matrix[i], -1, x * 4);
+// 		i++;
+// 	}
+// 	return (matrix);
+// }
 
 int		**ft_create_res_matrix(t_lem *lem, t_path *path, int iter)
 {
@@ -1107,13 +1123,15 @@ int		**ft_create_res_matrix(t_lem *lem, t_path *path, int iter)
 	int	**matrix_res;
 	int ants;
 
-	i = 0;
 	path->i = 0;
 	path->j = 0;
 	ants = lem->ants;
-	matrix_res = ft_allocate_matrix_int_new(ants + 1, iter + 3);
+	// matrix_res = (int **)ft_alloc_void(ants, (iter + 3) * sizeof(int), -1, 1);
+	matrix_res = ft_alloc_matrix(ants, iter + 2);
+	// matrix_res = ft_alloc_matrix_n(ants + 1, iter + 3);
 	while (ants)
 	{
+		i = 0;
 		while (path->path[i][0] != -1)
 		{
 			if (path->path[i][1] > 0)
@@ -1126,7 +1144,6 @@ int		**ft_create_res_matrix(t_lem *lem, t_path *path, int iter)
 			i++;
 		}
 		path->i++;
-		i = 0;
 	}
 	return (matrix_res);
 }
@@ -1182,24 +1199,24 @@ void		ft_print_res(int **matrix_res, t_lem *lem, t_room **room, char **map)
 		j = 0;
 		ft_printf("\n");
 	}
-	ft_printf("count_iter=%d\n", i);
+	ft_printf("count_iter=%d\n", i); // УБРАТЬ
 }
 
-int		**ft_make_sets(char **map, t_room **room, t_lem *lem)
-{
-	int		i;
-	int		**set;
+// void		ft_make_sets(char **map, t_room **room, t_lem *lem)
+// {
+// 	int		i;
+// 	int		**set;
 
-	i = 0;
-	set = ft_allocate_matrix_int(lem->count_rooms);
-	while (map[i])
-	{
-		if (ft_valid_str(map[i]) == 5)
-			ft_write_links(map[i], room, set);
-		i++;
-	}
-	return (set);
-}
+// 	i = 0;
+// 	set = ft_allocate_matrix_int(lem->count_rooms);
+// 	while (map[i])
+// 	{
+// 		if (ft_valid_str(map[i]) == 5)
+// 			ft_write_links(map[i], room, set);
+// 		i++;
+// 	}
+// 	lem->sets = set;
+// }
 
 void	ft_free_map(char ***map)
 {
@@ -1254,40 +1271,55 @@ void	ft_free_res_matrix(int **matrix, int iter)
 	free(matrix);
 }
 
+void		ft_res(t_path **path, t_lem *lem, t_room **room, char **map)
+{
+	int **matrix_res;
+
+	ft_reverse_path(path[lem->k]);
+	ft_put_ants_in_path(lem, path[lem->k]);
+	matrix_res = ft_create_res_matrix(lem, path[lem->k], path[lem->k]->res);
+	ft_print_res(matrix_res, lem, room, map);
+
+	ft_free_rooms(room, lem);
+	ft_free_res_matrix(matrix_res, path[lem->k]->res);
+	ft_free_path(lem->count_rooms + 1, path, 3);
+	ft_free_sets(lem->sets, lem);
+}
 int			main(void)
 {
-	int		k;
+	//int		k;
+	//int		**sets;
+	//int		*first;
+	//int		**matrix_res;
 	t_lem	lem;
 	char	**map;
-	int		**sets;
-	int		*tmp;
+	int		*qu;
 	t_room	**room;
 	t_path	**path;
-	int		*first;
-	int		**matrix_res;
-
 
 	ft_init(&lem, sizeof(t_lem));
 	ft_read_map(&map);
 	ft_validation(map, &lem) == 1 ? room = ft_record(map, &lem) : exit (0);
-	sets = ft_make_sets(map, room, &lem);
-	tmp = ft_alloc_qu(lem.count_rooms + 3);
-	ft_bfs2(sets, &lem, room, tmp);
+	ft_make_sets(map, room, &lem);
+	qu = ft_alloc_qu(lem.count_rooms + 3);
+	ft_bfs2(lem.sets, &lem, room, qu);
 	if (room[lem.count_rooms - 1]->lvl == 0)
 		ft_leave();
-	ft_unblock_all(sets);
-	path = ft_allocate_memory_path(3, lem.count_rooms + 1);
-	first = ft_first_path(path[0], room, &lem, sets, tmp);
-	k = ft_all_paths(path, room, &lem, sets, first, tmp);
-	ft_reverse_path(path[k]);
-	ft_put_ants_in_path(&lem, path[k]);
-	matrix_res = ft_create_res_matrix(&lem, path[k], path[k]->res);
-	ft_print_res(matrix_res, &lem, room, map);
-	ft_free_sets(sets, &lem);
-	ft_free_rooms(room, &lem);
-	ft_free_res_matrix(matrix_res, path[k]->res);
-	ft_free_path(lem.count_rooms + 1, path, 3);
-	free(tmp);
+	ft_unblock_all(lem.sets);
+	path = ft_alloc_path(3, lem.count_rooms + 1);
+	//first = ft_first_path(path[0], room, &lem, lem.sets, tmp);
+	ft_all_paths(path, room, &lem,/* lem.sets, first,*/ qu);
+
+	ft_res(path, &lem, room, map);
+	// ft_reverse_path(path[lem.k]);
+	// ft_put_ants_in_path(&lem, path[lem.k]);
+	// matrix_res = ft_create_res_matrix(&lem, path[lem.k], path[lem.k]->res);
+	// ft_print_res(matrix_res, &lem, room, map);
+	//ft_free_sets(sets, &lem);
+	// ft_free_rooms(room, &lem);
+	// ft_free_res_matrix(matrix_res, path[lem.k]->res);
+	// ft_free_path(lem.count_rooms + 1, path, 3);
+	free(qu);
 	// printf("OK\n"); // УБРАТЬ
     return (0);
 }
