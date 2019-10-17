@@ -3,22 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   ft_alloc.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: waddam <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: draudrau <draudrau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/18 23:31:50 by waddam            #+#    #+#             */
-/*   Updated: 2019/09/19 01:22:56 by waddam           ###   ########.fr       */
+/*   Updated: 2019/09/19 15:12:30 by draudrau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lemin.h"
 
-int		*ft_alloc_qu(int len)
+int		*ft_alloc_qu(int len, t_lem *lem)
 {
 	int	*tmp;
 
 	if (!(tmp = (int *)malloc(sizeof(int) * len)))
 		ft_leave();
 	ft_memset(tmp, -1, sizeof(int) * len);
+	lem->qu = tmp;
 	return (tmp);
 }
 
